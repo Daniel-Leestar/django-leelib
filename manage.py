@@ -3,7 +3,7 @@
 import os
 import sys
 
-# 装逼
+# Leelib Project
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Leelib.settings')
