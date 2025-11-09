@@ -1,0 +1,776 @@
+/*
+ Theme Name: LeeLib
+ Theme URI: http://iwwcc.top
+ Author: Daniel Lee
+ Description: This is a wordpress theme designed for online library, The original purpose of this design was to make the page look minimalist
+ Version: 1.5
+
+*/
+
+
+/*---------------------------init---------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body * {
+    font-family: "Microsoft YaHei" !important;
+}
+
+/*body:lang(zh_CN) *{*/
+/*    font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif!important; !* 中文使用微软雅黑 *!*/
+/*}*/
+
+/*body:lang(ja) *{*/
+/*    font-family: "Yu Gothic UI", "Noto Sans JP", "Hiragino Sans", "Helvetica Neue", Helvetica, Arial, sans-serif!important; !* 日文使用Yu Gothic UI *!*/
+/*}*/
+/*---------------------------navbar---------------------------*/
+.logolink {
+    text-decoration: none;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+    border-bottom: .5px solid #f3f3f3;
+}
+
+.logoimg {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+}
+
+.logoimg img {
+    width: 100%;
+    height: 100%;
+    border-radius: 7px;
+}
+
+.logo h1 {
+    display: inline-block;
+    line-height: 50px;
+    height: 50px;
+    font-size: 22px;
+    font-weight: bold;
+    margin-left: 5px;
+    color: #000;
+}
+
+.logo .logoimg, .logo h1 {
+    display: inline-block;
+    vertical-align: middle; /* 垂直居中对齐 */
+}
+
+.loginbtn {
+    background: #059377;
+    border: none;
+    height: 50px;
+    color: #fff;
+    padding: 0 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.loginbtn:hover {
+    background: #05725a;
+}
+
+.usertitle {
+    height: 50px;
+    padding: 0 20px;
+    font-size: 16px;
+    line-height: 50px;
+}
+
+.dropbtn {
+    display: none;
+}
+
+.navright img {
+    border-radius: 50%;
+    background: #000;
+    width: 35px;
+    height: 35px;
+    line-height: 50px;
+    margin-right: 10px;
+}
+
+.navright, .dropdown {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.navitem {
+    font-size: 16px;
+    color: #252525;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.userinfo {
+    display: flex;
+    align-items: center;
+}
+
+#language-switcher-locales {
+    font-size: 16px;
+    color: #252525;
+    text-decoration: none;
+    margin-right: 30px;
+    border: none;
+    cursor: pointer;
+}
+
+#username {
+    color: #059377;
+    text-decoration: none;
+    line-height: 50px;
+}
+
+.userimgname {
+    display: flex;
+    align-items: center;
+}
+
+/*---------------------------mainpage---------------------------*/
+.mainpage {
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 40px;
+}
+
+.maintitle {
+    font-size: 40px;
+    font-weight: lighter;
+    margin-bottom: 40px;
+}
+
+.maintitle span {
+    color: #035e4c;
+}
+
+/*index*/
+.books {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.65%;
+}
+
+.booksitem {
+    width: 24.5%;
+    aspect-ratio: 3 / 5;
+    overflow: hidden;
+    padding-bottom: 10px;
+}
+
+.booksitem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 确保图片不会变形 */
+}
+
+.nav-links > * {
+    color: #fff;
+    text-decoration: none;
+    padding: 4px 10px;
+    margin-top: 20px;
+    margin-right: 5px;
+    font-size: 15px;
+    background: #059377;
+    transition: 0.1s;
+    border-radius: 10%;
+}
+
+.nav-links > *:hover {
+    background: #333333;
+    transition: 0.1s;
+}
+
+
+.nav-links .current {
+    background: #035e4c !important;
+}
+
+/*single*/
+.singlemain {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.mainleft {
+    width: 30%;
+}
+
+.post-thumbnail {
+    width: 80%;
+}
+
+.post-thumbnail > img {
+    width: 100%;
+    height: auto;
+}
+
+.mainright {
+    width: 70%;
+
+    overflow: hidden;
+}
+
+.singletitle {
+    font-size: 40px;
+    font-weight: lighter;
+    margin-bottom: 10px;
+}
+
+.post-tags {
+    margin-bottom: 5px;
+}
+
+.post-tags a {
+    margin-right: 10px;
+    color: #035e4c;
+}
+
+.post-info {
+    padding-bottom: 15px;
+}
+
+#bookauthor {
+    color: #059377;
+    text-decoration: none;
+}
+
+.post-info > span {
+    margin-right: 20px;
+}
+
+.post-author {
+    margin-top: 15px;
+}
+
+.post-content p {
+    font-size: 17px;
+    color: #3f3f3f;
+    margin: 20px 0;
+}
+
+.file {
+    margin: 40px 0;
+}
+
+.file a {
+    font-size: 15px;
+    color: #059377;
+    text-decoration: none;
+}
+
+.filebutton {
+    color: #059377;
+    padding: 10px 15px;
+    background: none;
+    text-decoration: underline !important;
+}
+
+.readbutton {
+    color: #059377;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #059377;
+    background: #fff;
+    margin-right: 15px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.filebutton {
+    display: inline-block;
+}
+
+.onlydiv {
+    margin: 100px 0;
+}
+
+.onlylogin {
+    margin-bottom: 5px;
+    color: #ecb300 !important;
+}
+
+/*---------------------------recent---------------------------*/
+.recenttitle {
+    font-size: 30px;
+    font-weight: lighter;
+    margin-bottom: 20px;
+}
+
+.recbooks {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.recbooks a {
+    font-size: 18px;
+    margin-right: 20px;
+    padding-bottom: 15px;
+    text-decoration: none;
+    color: #035e4c;
+    font-weight: normal;
+}
+
+
+/*---------------------------footer---------------------------*/
+.footer {
+    margin-top: 40px;
+    background: #232323;
+    padding: 50px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.footer > h2 {
+    color: #fff;
+    width: 290px;
+    font-size: 30px;
+    font-weight: normal;
+}
+
+.footer > p {
+    color: #fff;
+}
+
+.footer span {
+    color: #059377;
+}
+
+/*---------------------------404---------------------------*/
+.page404 {
+    height: 550px;
+}
+
+.page404 h1 {
+    font-size: 60px;
+    font-weight: lighter;
+}
+
+.page404 span {
+    color: #059377;
+}
+
+/*---------------------------search---------------------------*/
+.searchmain {
+    width: 50%;
+    margin: 150px auto;
+}
+
+.searchmain > h1 {
+    font-size: 50px;
+    text-align: center;
+    font-weight: lighter;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.searchmain > h1 > span {
+    color: #059377;
+}
+
+.searchcontent {
+    width: 100%;
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-field {
+    width: 80%;
+    font-size: 15px;
+    box-sizing: border-box;
+    padding: 8px 15px;
+}
+
+.search-submit {
+    width: 20%;
+    font-size: 14px;
+    box-sizing: border-box;
+    padding: 8px 15px;
+    cursor: pointer;
+    color: #fff;
+    background: #059377;
+    border: none;
+}
+
+.search-submit:hover, .smsearch-submit:hover {
+    background: #035e4c;
+}
+
+.tag {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 180px;
+}
+
+.tag a {
+    margin: 0 7px;
+    color: #035e4c;
+}
+
+.smallsearch {
+    width: 200px;
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.smsearch-field {
+    width: 70%;
+    padding: 3px 10px;
+    font-size: 13px;
+}
+
+.smsearch-submit {
+    width: 30%;
+    padding: 3px 10px;
+    font-size: 13px;
+    background: #059377;
+    cursor: pointer;
+    border: none;
+    color: #fff;
+}
+
+.searchhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/*---------------------------pagination---------------------------*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination a, .pagination span {
+    padding: 8px 14px;
+    text-decoration: none;
+    color: #059377;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.pagination a:hover {
+    background-color: #059377;
+    color: white;
+}
+
+.pagination .current {
+    background-color: #059377;
+    color: white;
+    border-color: #059377;
+    cursor: default;
+}
+
+.pagination .disabled {
+    color: #ccc;
+    border-color: #eee;
+    cursor: not-allowed;
+}
+
+/*---------------------------profile---------------------------*/
+
+.profile-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.header-section {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 25px;
+    border: 2px solid var(--border-color); /* Subtle border */
+}
+
+.user-name {
+    font-size: 2em;
+    font-weight: lighter;
+    margin: 0;
+}
+
+.status-badge {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 4px 10px;
+    background-color: #059377; /* Green for active */
+    color: white;
+    border-radius: 2px;
+    font-size: 0.8em;
+    text-transform: uppercase;
+}
+
+.admin-tag {
+    background-color: #FFC107;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+
+/* Data List Styling */
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--light-gray);
+    font-size: 1.05em;
+}
+
+.info-list li:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #777;
+}
+
+.info-value {
+    color: var(--text-color);
+}
+
+/* Action Button */
+.action-button {
+    display: block;
+    width: 100%;
+    margin-top: 40px;
+    padding: 12px;
+    background-color: #059377;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.action-button:hover {
+    background-color: #05725a;
+}
+
+
+@media (min-width: 1024px) {
+    .dropdown {
+        display: flex;
+    }
+}
+
+/* 平板设备样式 */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /*main*/
+    .mainleft {
+        width: 45%;
+    }
+
+    .mainright {
+        width: 55%;
+    }
+
+    /*search*/
+    .searchmain {
+        width: 70%;
+    }
+}
+
+/* 手机设备样式 */
+@media (max-width: 767px) {
+    /*head*/
+    .dropbtn {
+        display: block;
+    }
+
+    .dropdown {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 90px;
+        background: #fff;
+        width: 100%;
+        transition: 0.3s;
+        padding: 25px 30px;
+        box-sizing: border-box;
+        border-bottom: .5px solid #f3f3f3;
+        justify-content: space-between;
+    }
+
+    .dropdown > * {
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+
+    }
+
+    .userinfo {
+        justify-content: space-between;
+        margin-top: 25px;
+    }
+
+    .loginbtn{
+        margin-left: 0;
+    }
+
+    .navitem {
+        margin-right: 0;
+    }
+
+    .dropbtn {
+        display: inline-block;
+        position: relative;
+        width: 25px; /* 根据需要调整大小 */
+        height: 25px; /* 根据需要调整大小 */
+        cursor: pointer;
+    }
+
+    .bar {
+        width: 100%;
+        height: 2.5px; /* 根据需要调整线条的厚度 */
+        background-color: rgba(0, 0, 0, 0.16); /* 根据需要调整颜色 */
+        position: absolute;
+        transition: transform 0.3s ease;
+    }
+
+    .bar:nth-child(1) {
+        top: 0;
+    }
+
+    .bar:nth-child(2) {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .bar:nth-child(3) {
+        bottom: 0;
+    }
+
+    .navright img {
+        margin-right: 20px;
+    }
+
+    #language-switcher-locales {
+        display: none;
+    }
+
+    /*main*/
+    .mainpage{
+        width: 85%;
+    }
+    .booksitem {
+        width: 49.5%;
+    }
+
+    /*single*/
+    .mainleft, .mainright {
+        width: 100%;
+    }
+
+    .post-thumbnail {
+        width: 65%;
+    }
+
+    .searchhead > h1 {
+        width: 100%;
+    }
+
+    /*footer*/
+    .footer > h2 {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .footer > p {
+        text-align: center;
+    }
+
+    /*search*/
+    .searchmain {
+        width: 90%;
+    }
+    .smallsearch,.search-form{
+        width: 100%;
+    }
+    .smallsearch{
+        height: 35px;
+        margin-bottom: 40px;
+    }
+
+
+
+    /*detial*/
+    .post-info span {
+        display: block;
+
+    }
+
+    .recbooks a {
+        width: 100%;
+    }
+
+    .post-thumbnail {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .singletitle {
+        margin: 20px 0;
+    }
+
+    .readbutton {
+        margin-bottom: 10px;
+    }
+
+    .file {
+        margin: 40px 0 0 0;
+    }
+}
+

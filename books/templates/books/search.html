@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="searchmain">
+    <h1>Find Your <span>Free</span> Books</h1>
+    <form role="search" method="get" class="search-form" action="{% url 'books_search_result' %}">
+        <div class="searchcontent">
+            <input type="search" class="search-field" placeholder="Book Name, Auther, Content" value="" name="q"/>
+            <button type="submit" class="search-submit">Search</button>
+        </div>
+    </form>
+
+    <div class="tag">
+        {% for tag in tags %}
+            <a href="{% url 'tag_books' tag.id %}">{{ tag.name }}</a>
+        {% empty %}
+            <p>暂无标签</p>
+        {% endfor %}
+
+        <!-- 调用自定义的随机标签函数 -->
+
+    </div>
+</div>
+
+{% endblock %}
+
+

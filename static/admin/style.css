@@ -1,0 +1,566 @@
+/* CSS 变量定义主题色 */
+
+
+/* 基础重置和字体设置 */
+* {
+
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+a {
+    text-decoration: none;
+}
+
+/* 顶部导航栏 - 风格来自截图 */
+
+
+/* 管理页面主容器 */
+.admin-admin-wrapper { /* 注意： 'admin-wrapper' 变为 'admin-admin-wrapper' */
+    display: flex;
+    flex-grow: 1;
+    padding: 20px 30px;
+}
+
+/* 左侧竖栏 */
+.admin-sidebar {
+    flex-basis: 220px;
+    flex-shrink: 0;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    padding: 15px;
+    margin-right: 20px;
+    height: fit-content;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+}
+
+.admin-sidebar ul li a {
+    display: block;
+    padding: 12px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+.admin-sidebar ul li a:hover {
+    background-color: #059377;
+    color: #fff;
+}
+
+.admin-sidebar ul li a.admin-active {
+    background-color: #059377;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* 右侧内容区 */
+.admin-main-content {
+    flex-grow: 1;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 25px;
+    min-width: 0; /* 修复 flex 布局中内容溢出的问题 */
+}
+
+.admin-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* 允许换行 */
+}
+
+.admin-content-header h1 {
+    margin-right: 15px; /* 标题和按钮间距 */
+    font-size: 40px;
+    font-weight: lighter;
+}
+
+.admin-search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.admin-search-container input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    font-size: 15px;
+    margin-right: 10px;
+}
+
+.admin-btn {
+    border: none;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.admin-btn-primary {
+    color: #059377;
+    width: 160px;
+    border: 1px solid #059377;
+    background: None;
+}
+
+.admin-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.admin-btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+.admin-btn-edit {
+    background-color: #FFC107;
+    color: #fff;
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+.admin-btn-danger:hover {
+    opacity: 0.9;
+}
+
+/* 书本列表 - 桌面 */
+.admin-book-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-book-list > p {
+    text-align: center;
+    padding: 15px;
+    color: #FFC107;
+}
+
+.admin-book-list-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
+    gap: 20px;
+    padding: 15px 20px;
+    background: rgba(5, 147, 119, 0.09);
+    font-size: 16px;
+    color: #000;
+    border-bottom: 1px solid var(--border-color);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.admin-book-list-item {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
+    gap: 20px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+    font-size: 15px;
+    color: #555;
+}
+
+.admin-book-list-item:last-child {
+    border-bottom: none;
+}
+
+.admin-book-list-item .admin-actions {
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-pagination {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.admin-pagination a {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 0 3px;
+    color: #059377;
+    border-radius: 5px;
+}
+
+.admin-pagination a:hover {
+    background-color: #059377;
+    color: #fff;
+}
+
+.admin-pagination a.admin-active {
+    background-color: #059377;
+    color: #fff;
+    font-weight: bold;
+}
+
+.admin-pagination a.admin-disabled {
+    color: #ccc;
+    border-color: #eee;
+    pointer-events: none;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~书本增加页~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.admin_book_content {
+    width: 100%;
+
+    padding: 40px 0;
+    border-radius: 5px;
+}
+
+.admin-main-content form {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.admin-main-content .mainleft {
+    width: 40%;
+}
+
+.admin-main-content .mainright {
+    width: 60%;
+}
+
+.admin_book_contentcenter {
+    width: 100%;
+    margin: 0 auto;
+}
+
+#admin_booktitle {
+    width: 100%;
+    font-size: 40px;
+    font-weight: lighter;
+    background: none;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.admin_book_content_info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.admin_book_content_infoitem {
+    width: 24%;
+}
+
+.admin_book_content_infoitem input {
+    width: 100%;
+}
+
+.admin_book_file {
+    position: relative;
+    background: #f7f7f7;
+    border: 1px dashed #dbdbdb;
+    display: inline-block;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin_book_file p {
+    z-index: 1;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 12px;
+    text-align: center;
+}
+
+.admin_book_file label {
+    width: 100%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.admin_book_file input {
+    display: none;
+}
+
+.admin_book_tag, .admin_book_author {
+    font-size: 20px;
+    line-height: 36px;
+    border: none;
+    border-bottom: 1px solid #000;
+}
+
+.admin_coverupload {
+    width: 100%;
+    aspect-ratio: 3/5;
+    background: #e7e7e7;
+    border-radius: 5px;
+    border: 2px dashed #ababab;
+    overflow: hidden;
+}
+
+.admin_coverupload label {
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: #494949;
+
+    position: relative;
+}
+
+.admin_coverupload label p {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    background: none;
+    z-index: 1;
+    background: rgba(103, 103, 103, 0.75);
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+}
+
+.admin_coverupload label img {
+    height: 100%;
+    position: absolute;
+    z-index: 0;
+}
+.admin_coverupload label p span{
+    width: 70%;
+    overflow: hidden;
+    margin: 0 auto;
+    color: #d3d3d3;
+}
+.admin_coverupload input {
+    display: none;
+}
+
+.admin-booktitle {
+    border: none;
+    width: 100%;
+}
+
+.admin-booktitle:focus, .admin-booktag:focus, .post-tags textarea:focus {
+    outline: none;
+}
+
+.admin-booktag {
+    font-size: 18px;
+    padding: 10px 0;
+    border: none;
+    width: 100%;
+    color: #05725a;
+}
+
+.post-tags textarea {
+    width: 100%;
+    border: none;
+    font-size: 18px;
+    color: #3f3f3f;
+    padding-top: 10px;
+}
+
+.file label {
+    cursor: pointer;
+    background: #f7f7f7;
+    border: 1px dashed #dbdbdb;
+    color: #494949;
+}
+
+.file input {
+    display: none;
+}
+
+/*上传*/
+/* [新增] 遮罩层样式 */
+
+/* 遮罩层背景：黑色、半透明、固定在全屏 */
+#upload-overlay {
+    position: fixed; /* 固定在视口上 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
+
+    /* 使用 Flexbox 让内容居中 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* 默认隐藏 */
+    display: none;
+
+    /* 确保在最顶层 */
+    z-index: 9999;
+}
+
+/* 进度条的白色框 */
+#upload-overlay .progress-box {
+    background-color: white;
+    padding: 30px 50px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#upload-overlay progress {
+    width: 100%;
+    height: 25px;
+    margin-top: 15px;
+    background-color: #fff;
+}
+
+#upload-overlay #progress-percent {
+    font-size: 1.2em;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+#upload-overlay progress::-webkit-progress-bar {
+    background-color: #fff; /* 轨道的颜色 (浅灰色) */
+    border-radius: 10px;
+}
+
+#upload-overlay progress::-webkit-progress-value {
+    background-color: #059377; /* 轨道的颜色 (浅灰色) */
+    border-radius: 10px;
+}
+
+/* ========================================
+自适应媒体查询 (Responsive Media Query)
+当屏幕宽度小于等于 768px 时生效
+========================================
+*/
+@media (max-width: 768px) {
+    .admin-top-header {
+        padding: 15px 20px;
+    }
+
+    .admin-admin-wrapper {
+        flex-direction: column; /* 侧边栏和主内容上下堆叠 */
+        padding: 10px;
+    }
+
+    .admin-sidebar {
+        flex-basis: auto; /* 重置宽度 */
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+
+    .admin-main-content {
+        padding: 15px;
+    }
+
+    .admin-content-header {
+        flex-direction: column; /* 标题和按钮上下堆叠 */
+        align-items: flex-start;
+    }
+
+    .admin-content-header h1 {
+        margin-bottom: 15px;
+    }
+
+    .admin-content-header .admin-btn-primary {
+        width: 100%; /* 新增按钮占满宽度 */
+        text-align: center;
+    }
+
+    .admin-search-container {
+        flex-direction: column; /* 搜索框和按钮堆叠 */
+        gap: 10px;
+    }
+
+    .admin-search-container .admin-btn {
+        width: 100%;
+    }
+
+    /* 关键：将列表转换为卡片视图 */
+    .admin-book-list-header {
+        display: none; /* 隐藏桌面版的列表头 */
+    }
+
+    .admin-book-list-item {
+        display: block; /* 覆盖 grid 布局，变为块级 */
+        padding: 15px;
+        margin-bottom: 10px;
+        border: 1px solid;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 增加卡片感 */
+        gap: 10px; /* 重置 gap */
+    }
+
+    /* 使用 data-label 显示标签 */
+    .admin-book-list-item div {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #d3d3d3;
+    }
+
+    .admin-book-list-item div::before {
+        content: attr(data-label); /* 显示 data-label 的内容 */
+        font-weight: bold;
+        padding-right: 15px;
+    }
+
+    .admin-book-list-item .admin-actions {
+        border-bottom: none;
+        padding-top: 15px;
+        display: flex;
+        width: 100%;
+    }
+
+    .admin-actions form {
+        width: 100%;
+    }
+
+    .admin-book-list-item .admin-actions::before {
+        display: none; /* 动作按钮不需要标签 */
+    }
+
+    .admin-book-list-item .admin-actions .admin-btn-danger, .admin-btn-edit {
+        width: 100%; /* 删除按钮占满宽度 */
+        padding: 10px;
+    }
+
+    .admin-btn-edit {
+        margin-bottom: 10px;
+    }
+
+    .admin-main-footer {
+        flex-direction: column; /* 页脚内容上下堆叠 */
+        text-align: center;
+    }
+
+    .admin-main-footer .admin-footer-text {
+        margin-bottom: 10px;
+    }
+
+    .admin-main-content .mainleft {
+        width: 100%;
+    }
+
+    .admin-main-content .mainright {
+        width: 100%;
+    }
+}

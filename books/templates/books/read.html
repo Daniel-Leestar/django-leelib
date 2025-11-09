@@ -1,0 +1,363 @@
+{% if file_type == 'epub' %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }}</title>
+    <style>
+        *{
+            font-family: "Microsoft YaHei";
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            flex-direction: column;
+        }
+
+        #viewer {
+            width: 80%; /* 阅读器宽度 */
+            max-width: 1400px; /* 最大宽度 */
+            height: 80vh; /* 阅读器高度 */
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+        #controls {
+            margin-top: 10px;
+            /* 居中对齐控制和页码信息 */
+            display: flex;
+            align-items: center;
+        }
+
+        #page-info {
+            margin: 0 20px;
+            font-size: 1.1em;
+            color: #333;
+            min-width: 150px; /* 确保页码有足够的空间显示 */
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            background-color: #059377;
+            color: white;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #046b56;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+</head>
+<body>
+<h1>{{ book.title }}</h1>
+
+<div id="viewer"></div>
+
+<div id="controls">
+    <button id="prev">Previous</button>
+    <span id="page-info"></span>
+    <button id="next">Next</button>
+</div>
+
+<script>
+    // 假设这是 Django 模板变量注入的文件 URL
+    const bookUrl = '{{ book.file.url }}';
+
+    // 1. 创建 Book 实例
+    const book = ePub(bookUrl);
+
+    // 2. 将内容渲染到指定的 HTML 元素
+    const rendition = book.renderTo("viewer", {
+        width: "100%",
+        height: "100%",
+        method: "default"
+    });
+
+    // 3. 显示第一页
+    rendition.display();
+
+    // 获取 DOM 元素
+    const pageInfo = document.getElementById("page-info");
+
+    /**
+     * 更新页码信息显示
+     * @param {string} location - rendition.currentLocation() 返回的位置对象
+     */
+    function updatePageInfo(location) {
+        if (location && location.start) {
+            // totalPages 是指**当前章节**的总页数
+            const totalPages = location.pages;
+            // pageIndex 是指**当前章节**的页码 (从 1 开始)
+            const currentPage = location.page;
+
+            // cfi 是指向书中某个位置的唯一标识符
+            const cfi = location.start.cfi;
+
+            // 获取章节索引 (spine 索引)
+            const chapterIndex = book.navigation.spine.findIndex(item => cfi.includes(item.href));
+
+            // 尝试获取所有章节（spine）的总数
+            const totalChapters = book.navigation.spine.length;
+
+            pageInfo.innerHTML = `
+                <p>当前页码: ${currentPage} / ${totalPages} (本章)</p>
+                <p>章节进度: ${chapterIndex + 1} / ${totalChapters}</p>
+            `;
+
+            // 如果您需要**整本书的全局页码**，您需要使用 book.locations
+            // 这需要先生成 Location 数据，可能会耗时较长：
+            /*
+            if (book.locations.length > 0) {
+                const percentage = book.locations.percentageFromCfi(cfi);
+                pageInfo.innerHTML += `<p>全书进度: ${(percentage * 100).toFixed(2)}%</p>`;
+            }
+            */
+        }
+    }
+
+    // 4. 监听 rendition 的关键事件
+    // 'rendered' 事件在每次翻页或加载新章节时触发
+    rendition.on("rendered", function(location){
+        updatePageInfo(rendition.currentLocation());
+    });
+
+    // 'locationChanged' 事件在用户滚动或翻页时触发，用于实时更新
+    rendition.on("locationChanged", function(location){
+        updatePageInfo(location);
+    });
+
+    // 5. 翻页功能
+    document.getElementById("prev").addEventListener("click", function () {
+        rendition.prev();
+    });
+
+    document.getElementById("next").addEventListener("click", function () {
+        rendition.next();
+    });
+
+    // 6. 处理窗口大小变化时重新渲染
+    window.addEventListener("resize", function () {
+        rendition.resize();
+        // 重新调整大小后，页数会变化，需要重新获取并更新
+        updatePageInfo(rendition.currentLocation());
+    });
+
+    // 7. (高级功能) 生成全书位置列表，用于计算总页数和全局进度
+    // **注意：对于大型书籍，这可能需要一些时间，且只能在服务器环境下运行**
+    book.ready.then(() => {
+        return book.locations.generate();
+    }).then(() => {
+        // 全局位置列表生成后，我们可以获取到总的“页数” (基于生成时的视口)
+        const totalGlobalPages = book.locations.length;
+        if (totalGlobalPages > 0) {
+             pageInfo.innerHTML = `全书总页数 (估算): ${totalGlobalPages}`;
+             // 再次触发更新，以显示当前页的全局进度
+             updatePageInfo(rendition.currentLocation());
+        }
+    });
+
+    console.log("EPUB Reader is running with epub.js and page numbers!");
+</script>
+</body>
+</html>
+
+
+
+
+{% elif file_type == 'pdf' %}
+
+
+
+    <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>简单的 PDF 阅读器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        #pdf-controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+        }
+        button:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        #pdf-viewer {
+            /* 容器用于存放 canvas */
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: auto; /* 如果 PDF 很大，允许滚动 */
+            max-height: 80vh;
+        }
+        /* 隐藏原始的 canvas，让它由 JS 动态控制 */
+        canvas {
+            display: block;
+            background: white;
+            margin: 0 auto;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs" type="module"></script>
+</head>
+<body>
+    <h1>{{ book.title }}</h1>
+
+    <div id="pdf-controls">
+        <button id="prev-page" disabled>Previous</button>
+        <span id="page-info">
+            页码: <span id="page-num">0</span> / <span id="page-count">0</span>
+        </span>
+        <button id="next-page" disabled>Next</button>
+    </div>
+
+    <div id="pdf-viewer">
+        <canvas id="the-canvas"></canvas>
+    </div>
+
+    <script type="module">
+        import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+
+// 设置 workerSrc，这是 pdf.js 必须的，用于后台处理 PDF 文件
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+
+const url = '{{ book.file.url }}'; // **请替换为您的 PDF 文件路径**
+
+let pdfDoc = null;
+let pageNum = 1;
+let pageRendering = false;
+let pageNumPending = null;
+const scale = 1.5;
+const canvas = document.getElementById('the-canvas');
+const ctx = canvas.getContext('2d');
+
+/**
+ * 渲染指定页码
+ * @param {number} num
+ */
+function renderPage(num) {
+    pageRendering = true;
+
+    // 使用 Promise 获取页面
+    pdfDoc.getPage(num).then(function(page) {
+        const viewport = page.getViewport({ scale: scale });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // 渲染 PDF 页面到 canvas 上下文
+        const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+        };
+        const renderTask = page.render(renderContext);
+
+        // 等待渲染完成
+        renderTask.promise.then(function() {
+            pageRendering = false;
+            if (pageNumPending !== null) {
+                // 如果在渲染过程中有新的页码请求，则渲染新页码
+                renderPage(pageNumPending);
+                pageNumPending = null;
+            }
+        });
+    });
+
+    // 更新页码显示和控制按钮状态
+    document.getElementById('page-num').textContent = num;
+    document.getElementById('prev-page').disabled = (pageNum <= 1);
+    document.getElementById('next-page').disabled = (pageNum >= pdfDoc.numPages);
+}
+
+/**
+ * 如果页面正在渲染，则排队等待渲染。
+ * 否则立即渲染新页面。
+ */
+function queueRenderPage(num) {
+    if (pageRendering) {
+        pageNumPending = num;
+    } else {
+        renderPage(num);
+    }
+}
+
+/**
+ * 显示前一页
+ */
+function onPrevPage() {
+    if (pageNum <= 1) {
+        return;
+    }
+    pageNum--;
+    queueRenderPage(pageNum);
+}
+document.getElementById('prev-page').addEventListener('click', onPrevPage);
+
+/**
+ * 显示后一页
+ */
+function onNextPage() {
+    if (pageNum >= pdfDoc.numPages) {
+        return;
+    }
+    pageNum++;
+    queueRenderPage(pageNum);
+}
+document.getElementById('next-page').addEventListener('click', onNextPage);
+
+// 异步加载 PDF 文档
+pdfjsLib.getDocument(url).promise.then(function(pdfDocument) {
+    pdfDoc = pdfDocument;
+    const pageCount = pdfDoc.numPages;
+    document.getElementById('page-count').textContent = pageCount;
+
+    // 启用控制按钮
+    document.getElementById('prev-page').disabled = (pageCount <= 1);
+    document.getElementById('next-page').disabled = (pageCount <= 1);
+
+    // 开始渲染第一页
+    renderPage(pageNum);
+}).catch(function(reason) {
+    // PDF 加载失败处理
+    console.error('Error during PDF loading:', reason);
+    alert('无法加载 PDF 文件: ' + reason.message);
+});
+    </script>
+</body>
+</html>
+
+
+
+
+{% else %}
+    不支持
+{% endif %}

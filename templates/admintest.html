@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - Leelib</title>
+    <style>
+        /* CSS 变量定义主题色 */
+
+
+        /* 基础重置和字体设置 */
+        * {
+
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* 顶部导航栏 - 风格来自截图 */
+        
+
+        /* 管理页面主容器 */
+        .admin-admin-wrapper { /* 注意： 'admin-wrapper' 变为 'admin-admin-wrapper' */
+            display: flex;
+            flex-grow: 1;
+            padding: 20px 30px;
+        }
+
+        /* 左侧竖栏 */
+        .admin-sidebar {
+            flex-basis: 220px;
+            flex-shrink: 0;
+            border: 1px solid #d3d3d3;
+            border-radius: 5px;
+            padding: 15px;
+            margin-right: 20px;
+            height: fit-content;
+        }
+
+        .admin-sidebar ul {
+            list-style: none;
+        }
+
+        .admin-sidebar ul li a {
+            display: block;
+            padding: 12px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #000;
+        }
+
+        .admin-sidebar ul li a:hover {
+            background-color: #059377;
+            color: #fff;
+        }
+
+        .admin-sidebar ul li a.admin-active {
+            background-color: #059377;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* 右侧内容区 */
+        .admin-main-content {
+            flex-grow: 1;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 25px;
+            min-width: 0; /* 修复 flex 布局中内容溢出的问题 */
+        }
+
+        .admin-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* 允许换行 */
+        }
+
+        .admin-content-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-right: 15px; /* 标题和按钮间距 */
+        }
+
+        .admin-search-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .admin-search-container input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #d3d3d3;
+            border-radius: 5px;
+            font-size: 15px;
+            margin-right: 10px;
+        }
+
+        .admin-btn {
+            border: none;
+            padding: 10px 18px;
+            font-size: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .admin-btn-primary {
+            background-color: #059377;
+            color: #fff;
+            width: 140px;
+        }
+
+        .admin-btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .admin-btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+
+        .admin-btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* 书本列表 - 桌面 */
+        .admin-book-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .admin-book-list-header {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
+            gap: 20px;
+            padding: 15px 20px;
+            background: #059377;
+            font-weight: 600;
+            font-size: 16px;
+            color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .admin-book-list-item {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
+            gap: 20px;
+            padding: 25px 20px;
+            border-bottom: 1px solid #d3d3d3;
+            align-items: center;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .admin-book-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .admin-book-list-item .admin-actions {
+            text-align: center;
+        }
+
+        .admin-pagination {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .admin-pagination a {
+            display: inline-block;
+            padding: 8px 14px;
+            margin: 0 3px;
+            color: #059377;
+            border-radius: 5px;
+        }
+
+        .admin-pagination a:hover {
+            background-color: #059377;
+            color: #fff;
+        }
+
+        .admin-pagination a.admin-active {
+            background-color: #059377;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .admin-pagination a.admin-disabled {
+            color: #ccc;
+            border-color: #eee;
+            pointer-events: none;
+        }
+
+        
+        /* ========================================
+        自适应媒体查询 (Responsive Media Query)
+        当屏幕宽度小于等于 768px 时生效
+        ========================================
+        */
+        @media (max-width: 768px) {
+            .admin-top-header {
+                padding: 15px 20px;
+            }
+
+            .admin-admin-wrapper {
+                flex-direction: column; /* 侧边栏和主内容上下堆叠 */
+                padding: 10px;
+            }
+
+            .admin-sidebar {
+                flex-basis: auto; /* 重置宽度 */
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .admin-main-content {
+                padding: 15px;
+            }
+
+            .admin-content-header {
+                flex-direction: column; /* 标题和按钮上下堆叠 */
+                align-items: flex-start;
+            }
+
+            .admin-content-header h1 {
+                margin-bottom: 15px;
+            }
+
+            .admin-content-header .admin-btn-primary {
+                width: 100%; /* 新增按钮占满宽度 */
+                text-align: center;
+            }
+
+            .admin-search-container {
+                flex-direction: column; /* 搜索框和按钮堆叠 */
+                gap: 10px;
+            }
+
+            .admin-search-container .admin-btn {
+                width: 100%;
+            }
+
+            /* 关键：将列表转换为卡片视图 */
+            .admin-book-list-header {
+                display: none; /* 隐藏桌面版的列表头 */
+            }
+
+            .admin-book-list-item {
+                display: block; /* 覆盖 grid 布局，变为块级 */
+                padding: 15px;
+                margin-bottom: 10px;
+                border: 1px solid;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* 增加卡片感 */
+                gap: 10px; /* 重置 gap */
+            }
+
+            /* 使用 data-label 显示标签 */
+            .admin-book-list-item div {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #d3d3d3;
+            }
+
+            .admin-book-list-item div::before {
+                content: attr(data-label); /* 显示 data-label 的内容 */
+                font-weight: bold;
+                padding-right: 15px;
+            }
+
+            .admin-book-list-item .admin-actions {
+                border-bottom: none;
+                padding-top: 15px;
+                text-align: left; /* 重置对齐 */
+                display: block;
+            }
+
+            .admin-book-list-item .admin-actions::before {
+                display: none; /* 动作按钮不需要标签 */
+            }
+
+            .admin-book-list-item .admin-actions .admin-btn-danger {
+                width: 100%; /* 删除按钮占满宽度 */
+                padding: 10px;
+            }
+
+            .admin-main-footer {
+                flex-direction: column; /* 页脚内容上下堆叠 */
+                text-align: center;
+            }
+
+            .admin-main-footer .admin-footer-text {
+                margin-bottom: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    
+
+    <div class="admin-admin-wrapper">
+
+        <nav class="admin-sidebar">
+            <ul>
+                <li><a href="#" class="admin-active">Books</a></li>
+                <li><a href="#">Tags</a></li>
+                <li><a href="#">Users</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-main-content">
+
+            <div class="admin-content-header">
+                <h1>Books Management</h1>
+                <button class="admin-btn admin-btn-primary">Add New Book</button>
+            </div>
+
+            <div class="admin-search-container">
+                <input type="text" placeholder="Search by title, author, etc.">
+                <button class="admin-btn admin-btn-primary">Search</button>
+            </div>
+
+            <div class="admin-book-list">
+                <div class="admin-book-list-header">
+                    <div>Title</div>
+                    <div>Author</div>
+                    <div>Upload Date</div>
+                    <div>Uploader</div>
+                    <div class="admin-actions">Actions</div>
+                </div>
+
+                <div class="admin-book-list-item">
+                    <div data-label="Title">The Psychology of Money</div>
+                    <div data-label="Author">Morgan Housel</div>
+                    <div data-label="Upload Date">Nov 5, 2025</div>
+                    <div data-label="Uploader">Daniel Lee (1@1.com)</div>
+                    <div class="admin-actions">
+                        <button class="admin-btn admin-btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <div class="admin-book-list-item">
+                    <div data-label="Title">Who Moved My Cheese?</div>
+                    <div data-label="Author">Spencer Johnson, M.D.</div>
+                    <div data-label="Upload Date">Nov 4, 2025</div>
+                    <div data-label="Uploader">admin@leelib.com</div>
+                    <div class="admin-actions">
+                        <button class="admin-btn admin-btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <div class="admin-book-list-item">
+                    <div data-label="Title">Thinking, Fast and Slow</div>
+                    <div data-label="Author">Daniel Kahneman</div>
+                    <div data-label="Upload Date">Nov 2, 2025</div>
+                    <div data-label="Uploader">Daniel Lee (1@1.com)</div>
+                    <div class="admin-actions">
+                        <button class="admin-btn admin-btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <div class="admin-book-list-item">
+                    <div data-label="Title">The Little Prince</div>
+                    <div data-label="Author">Antoine de Exupéry</div>
+                    <div data-label="Upload Date">Oct 30, 2025</div>
+                    <div data-label="Uploader">guest@example.com</div>
+                    <div class="admin-actions">
+                        <button class="admin-btn admin-btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="admin-pagination">
+                <a href="#" class="admin-disabled">Previous</a>
+                <a href="#" class="admin-active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">Next</a>
+            </nav>
+
+        </main>
+    </div>
+
+    
+
+</body>
+</html>

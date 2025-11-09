@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    progress {
+  width: 300px;
+  height: 20px;
+        
+}
+
+/* Chrome、Edge、Safari (WebKit) */
+progress::-webkit-progress-bar {
+  background-color: #eee; /* 背景条颜色 */
+  border-radius: 10px;
+}
+
+progress::-webkit-progress-value {
+  background-color: #059377; /* 进度颜色 */
+  border-radius: 10px;
+}
+</style>
+<body>
+<h1>test</h1>
+<p>姓名: {{ user.first_name }} {{ user.last_name }}</p>
+<p>邮箱: {{ user.email }}</p>
+<p>权限等级: {{ user.privilege }}</p>
+<p>是否激活: {{ user.is_active }}</p>
+<h1>测试码: {{ request.session.test }}</h1>
+</body>
+</html>
+<progress value="60" max="100"></progress>

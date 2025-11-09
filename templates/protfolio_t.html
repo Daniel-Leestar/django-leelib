@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Minimal Style</title>
+    <style>
+        :root {
+            /* Define brand colors for easy change */
+            --primary-color: #0087FF; /* A clean blue */
+            --text-color: #333333;
+            --light-gray: #F5F5F5;
+            --border-color: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; /* Modern, clean font */
+            background-color: var(--light-gray);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .profile-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Very soft, modern shadow */
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header-section {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 25px;
+            border: 2px solid var(--border-color); /* Subtle border */
+        }
+
+        .user-name {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 4px 10px;
+            background-color: #4CAF50; /* Green for active */
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .admin-tag {
+            background-color: #FFC107;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+
+        /* Data List Styling */
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 1.05em;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #777;
+        }
+
+        .info-value {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Action Button */
+        .action-button {
+            display: block;
+            width: 100%;
+            margin-top: 40px;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .action-button:hover {
+            background-color: #005A9C;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        
+        <div class="header-section">
+            <img src="https://via.placeholder.com/80/0087FF/FFFFFF?text=JP" alt="User Avatar" class="avatar">
+            <div>
+                <h1 class="user-name">Jane Peters</h1>
+                <span class="status-badge">Active</span>
+                <span class="admin-tag">ADMIN</span>
+            </div>
+        </div>
+
+        <ul class="info-list">
+            <li>
+                <span class="info-label">Email</span>
+                <span class="info-value">jane.peters@example.com</span>
+            </li>
+            <li>
+                <span class="info-label">Account Status</span>
+                <span class="info-value">Verified & Active</span>
+            </li>
+            <li>
+                <span class="info-label">User Level</span>
+                <span class="info-value">Pro Contributor (Level 8)</span>
+            </li>
+            <li>
+                <span class="info-label">Administrative Role</span>
+                <span class="info-value">Yes</span>
+            </li>
+        </ul>
+
+        <a href="#" class="action-button">Change Password</a>
+
+    </div>
+
+</body>
+</html>

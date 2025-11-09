@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    
+
+    <main class="mainpage">
+{#        <h1 class="maintitle">{{ user.first_name }} {{ user.last_name }}</h1>#}
+{#        <div class="books">#}
+{#            <p>Name: {{ user.first_name }} {{ user.last_name }}</p>#}
+{#            <p>Email: {{ user.email }}</p>#}
+{#            <p>Privilege: {{ user.privilege }}</p>#}
+{#            <p>Is Active: {{ user.is_active }}</p>#}
+{#        </div>#}
+    
+    
+    
+        <div class="profile-container">
+        
+        <div class="header-section">
+            <img src="{% static 'img/ava.png' %}" alt="User Avatar" class="avatar">
+            <div>
+                <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
+                {% if user.is_active %}
+                <span class="status-badge">Active</span>
+                {% endif %}
+            {% if user.is_superuser %}
+                <span class="admin-tag">ADMIN</span>
+            {% endif %}
+            {% if user.is_staff %}
+                <span class="admin-tag">STAFF</span>
+            {% endif %}
+            </div>
+        </div>
+
+        <ul class="info-list">
+            <li>
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ user.email }}</span>
+            </li>
+            <li>
+                <span class="info-label">Account Status</span>
+                <span class="info-value">{% if user.is_active %}Active{% else %}Inactive{% endif %}</span>
+            </li>
+            <li>
+                <span class="info-label">User Level</span>
+                <span class="info-value">Level {{ user.privilege }}</span>
+            </li>
+            <li>
+                <span class="info-label">Administrative Role</span>
+                <span class="info-value">{% if user.is_superuser %}Yes{% else %}No{% endif %}</span>
+            </li>
+        </ul>
+
+        <a href="{% url 'modifypsw' %}" class="action-button">Change Password</a>
+
+    </div>
+    </main>>
+
+{% endblock %}

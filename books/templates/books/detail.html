@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <script>
+
+    // 确保 DOM 加载完毕
+document.addEventListener('DOMContentLoaded', function() {
+
+    // 1. 获取所有需要操作的元素
+    const form = document.getElementById('upload-form');
+    const progressBarContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const progressPercent = document.getElementById('progress-percent');
+    const uploadStatus = document.getElementById('upload-status');
+
+    // 2. 监听表单的 "submit" 事件
+    form.addEventListener('submit', function(e) {
+
+        // 3. 阻止表单的默认（同步）提交
+        e.preventDefault();
+
+        // 4. 显示进度条，清空旧状态
+        progressBar.value = 0;
+        progressPercent.textContent = '0%';
+        progressBarContainer.style.display = 'block';
+        uploadStatus.textContent = '';
+        uploadStatus.style.color = 'black';
+
+        // 5. 创建一个 FormData 对象，它会自动打包所有表单数据，包括文件
+        //    (它也会自动找到并包含 {% csrf_token %})
+        const formData = new FormData(form);
+
+        // 6. 创建一个新的 XHR (AJAX) 请求
+        const xhr = new XMLHttpRequest();
+
+        // 7. [核心] 监听上传进度
+        //    xhr.upload.addEventListener 是关键
+        xhr.upload.addEventListener('progress', function(event) {
+            if (event.lengthComputable) {
+                // event.loaded = 已上传的字节
+                // event.total = 总字节
+                const percentComplete = Math.round((event.loaded / event.total) * 100);
+                progressBar.value = percentComplete;
+                progressPercent.textContent = percentComplete + '%';
+            }
+        });
+
+        // 8. 监听上传完成
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200) {
+                // 成功！
+                const response = JSON.parse(xhr.responseText);
+                uploadStatus.textContent = '上传成功！正在跳转...';
+                uploadStatus.style.color = 'green';
+
+                // 关键：从 Django 返回的 JSON 中获取 URL 并跳转
+                window.location.href = response.redirect_url;
+
+            } else {
+                // 失败
+                uploadStatus.textContent = '上传失败。' + (JSON.parse(xhr.responseText).error || '未知错误');
+                uploadStatus.style.color = 'red';
+                progressBarContainer.style.display = 'none'; // 隐藏进度条
+            }
+        });
+
+        // 9. 监听上传出错
+        xhr.addEventListener('error', function() {
+            uploadStatus.textContent = '上传过程中发生网络错误。';
+            uploadStatus.style.color = 'red';
+            progressBarContainer.style.display = 'none';
+        });
+
+        // 10. 配置并发送请求
+        // "POST" 必须大写，URL 应该是你表单提交的地址
+        // 我们假设表单提交到当前页面，所以 action 为空，URL 也为空
+        const postURL = form.action || window.location.href;
+        xhr.open('POST', postURL);
+
+        // 确保 Django 知道这是一个 AJAX 请求（可选，但推荐）
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+        xhr.send(formData);
+    });
+});
+
+    </script>
+    <article class="mainpage singlemain">
+        <div class="mainleft">
+            <!-- 输出特色图片 -->
+            <div class="post-thumbnail">
+                <img src="/media/{{ book.cover }}" alt="">
+            </div>
+        </div>
+        <div class="mainright">
+            <h1 class="singletitle">{{ book.title }}</h1>
+
+            {#获取当前文章的标签#}
+
+            <div class="post-tags">
+                {% for tag in book.tags.all %}
+                    <a href="{% url 'tag_books' tag.id %}">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+
+            <p class="post-info">
+                <span><a href="/searchview/?q={{ book.author }}" id="bookauthor">{{ book.author }}</a></span>
+                <span>Upload Time: {{ book.upload_time }}</span>
+                <span>Share: {{ book.uploader }}</span>
+            </p>
+
+            {% if request.user.is_authenticated %}
+                <!-- 输出文章内容 -->
+                <div class="post-content">
+
+
+                    <p>{{ book.description }}</p>
+
+                </div>
+                <div class="file">
+
+
+                    {% if is_collected %}
+                        <a href="{% url 'add_to_bookshelf' book.id %}" class="readbutton" style="background: #FFC107;color: #fff; border-color: #FFC107;">Remove from Bookshelf</a>
+                    {% else %}
+                        <a href="{% url 'add_to_bookshelf' book.id %}" class="readbutton" style="background: #059377;color: #fff;">Add to Bookshelf</a>
+                    {% endif %}
+                    <a href="{% url 'books_read' book.id %}" class="readbutton">Online Preview</a>
+                    <a href="{{ book.file.url }}" download class="filebutton">Download</a>
+                </div>
+            {% else %}
+                <div class="onlydiv" style="margin: 50px 0">
+                    <div class="onlylogin">Warning: This content only login. This is a private project, sign up
+                        function is not available.
+                    </div>
+                </div>
+            {% endif %}
+            <!-- 输出作者信息 -->
+            <div class="post-author">
+
+            </div>
+        </div>
+
+    </article>
+
+    <div class="mainpage recent">
+        <h1 class="recenttitle">Recent Post</h1>
+        <div class="recbooks">
+            {% for recbook in recbooks %}
+
+                <a href="{% url 'books_detail' recbook.id %}" class="recentitem">
+                    {{ recbook.title }}
+                </a>
+
+            {% empty %}
+                <p>No content found</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

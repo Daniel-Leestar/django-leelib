@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    
+    <script>
+        // 等同于 document.addEventListener('DOMContentLoaded', ...)
+        $(document).ready(function () {
+            $('#upcover').change(function () {
+                const filevalue = this.value;
+                const file = this.files[0]; // 用户选择的文件
+                if (file) {
+                    const imgURL = URL.createObjectURL(file); // 生成临时预览地址
+                    $('.admin_coverupload img').attr('src', imgURL); // 显示图片
+                }
+                $('.admin_coverupload label span').text(filevalue);
+            })
+
+            $('#upfile').change(function () {
+                const filevalue = this.value;
+                $('.file a').text(filevalue)
+            })
+            
+            //进度条
+
+            // 1. 获取所有需要操作的元素 (用 jQuery 选择器)
+            console.log("jQuery 准备完毕。"); // 1. 检查 JS 是否加载
+
+            const $form = $('#upload-form');
+            const $overlay = $('#upload-overlay');
+            const $progressBar = $('#progress-bar');
+            const $progressPercent = $('#progress-percent');
+            const $uploadStatus = $('#upload-status');
+
+            if ($form.length === 0) {
+                console.error("错误：未找到 ID 为 'upload-form' 的表单！"); // 2. 检查表单 ID
+            }
+
+            $form.on('submit', function (e) {
+
+                e.preventDefault();
+                console.log("表单提交已被阻止 (Prevented)。"); // 3. 检查事件是否绑定
+
+                $overlay.css('display', 'flex');
+                $progressBar.val(0);
+                $progressPercent.text('0%');
+                if ($uploadStatus) $uploadStatus.text('');
+
+                const formData = new FormData(this);
+
+                // 4. [调试] 检查 FormData 是否包含文件
+                // 确保你的文件 input name 是 "book_file" 和 "cover"
+                console.log("FormData 已创建。");
+                console.log("封面文件 (cover):", formData.get('cover'));
+                console.log("书本文件 (book_file):", formData.get('book_file'));
+
+
+                $.ajax({
+                    url: $form.attr('action') || window.location.href,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+
+                    xhr: function () {
+                        const xhr = new window.XMLHttpRequest();
+
+                        console.log("XHR 对象已创建。"); // 5. 检查 XHR
+
+                        xhr.upload.addEventListener('progress', function (event) {
+
+                            // 6. [核心调试] 检查 progress 事件
+                            console.log("Progress 事件触发:", event);
+
+                            if (event.lengthComputable) {
+                                console.log("已上传 (Loaded):", event.loaded, "总大小 (Total):", event.total);
+
+                                const percentComplete = Math.round((event.loaded / event.total) * 100);
+
+                                $progressBar.val(percentComplete);
+                                $progressPercent.text(percentComplete + '%');
+                            } else {
+                                // 如果浏览器不知道总大小，会进入这里
+                                console.warn("无法计算进度 (event.lengthComputable is false)");
+                                $progressPercent.text('Uploading... (Unable to calculate progress)...');
+                            }
+                        });
+
+                        return xhr;
+                    },
+
+                    success: function (response) {
+                        console.log("成功 (Success):", response); // 7. 检查成功
+                        $progressPercent.text('Upload complete! Redirecting shortly...');
+                        window.location.href = response.redirect_url;
+                    },
+
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("失败 (Error):", textStatus, errorThrown); // 8. 检查失败
+                        console.error("服务器响应:", jqXHR.responseText);
+
+                        $overlay.css('display', 'none');
+
+                        let errorMsg = 'upload fail: ' + errorThrown;
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.error) {
+                            errorMsg = 'upload fail: ' + jqXHR.responseJSON.error;
+                        }
+
+                        if ($uploadStatus) {
+                            $uploadStatus.text(errorMsg);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <link rel="stylesheet" href="{% static 'admin/style.css' %}">
+    <div class="admin-admin-wrapper">
+
+        <nav class="admin-sidebar">
+            <ul>
+                <li><a href="{% url 'admin_book' %}" class="admin-active">Books</a></li>
+                <li><a href="#">Tags</a></li>
+                <li><a href="#">Users</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-main-content">
+            <form action="{% url 'admin_book_add' %}" method="post" enctype="multipart/form-data" id="upload-form">
+                {% csrf_token %}
+                <div class="mainleft">
+                    <!-- 输出特色图片 -->
+                    <div class="post-thumbnail">
+                        <div class="admin_coverupload">
+                            <label for="upcover"><p><span>Upload Cover</span></p><img src="" alt=""></label>
+                            <input type="file" id="upcover" name="cover"  accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="mainright">
+                    <input type="text" class="singletitle admin-booktitle" placeholder="Book Name" name="title">
+
+                    {#获取当前文章的标签#}
+
+                    <div class="post-tags">
+
+                        <input type="text" placeholder='Tag (Separate each tag with a ",")' class="admin-booktag"
+                               name="tags">
+
+                    </div>
+
+                    <div class="post-tags">
+                        <input type="text" placeholder="Author" class="admin-booktag" name="author">
+                    </div>
+
+                    <div class="post-tags">
+                        <textarea id="" rows="15" placeholder="Type Description Here..." name="description"></textarea>
+
+                    </div>
+
+
+                    <!-- 输出文章内容 -->
+                    <div class="post-content">
+
+
+                        <p></p>
+
+                    </div>
+                    <div class="file" style="margin-bottom: 10px;">
+                        <label for="upfile" class="readbutton">Up Load Book file</label>
+                        <a href="" download class="filebutton"></a>
+                        <input type="file" id="upfile" name="book_file" accept=".pdf,.epub">
+
+                    </div>
+                    <input type="submit" class="readbutton" style="width: 167px;background: #059377;color: #fff;">
+                    <p class="filebutton" style="text-decoration: none;color: #FFC107;" id="upload-status">{{ err }}</p>
+                </div>
+
+
+            </form>
+
+
+        </main>
+    </div>
+
+
+    <div id="upload-overlay">
+        <div class="progress-box">
+            <h3 style="color: #059377;">Uploading books...</h3>
+            <p style="margin-top: 10px;">The file is large. Please wait patiently and do not close or refresh the page.</p>
+
+            <progress id="progress-bar" value="0" max="100" style=""></progress>
+            <span id="progress-percent">0%</span>
+        </div>
+    </div>
+
+{% endblock %}

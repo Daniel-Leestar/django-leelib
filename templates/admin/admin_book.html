@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <link rel="stylesheet" href="{% static 'admin/style.css' %}">
+    <div class="admin-admin-wrapper">
+
+        <nav class="admin-sidebar">
+            <ul>
+                <li><a href="#" class="admin-active">Books</a></li>
+                <li><a href="#">Tags</a></li>
+                <li><a href="#">Users</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-main-content">
+
+            <div class="admin-content-header">
+                <h1>Books Management {% if not user.is_staff and not user.is_superuser %}<span style="color: #dc3545;">No Permission</span>{% endif %}</h1>
+                <a href="{% url 'admin_book_add' %}">
+                    <button class="admin-btn admin-btn-primary">Add New Book</button>
+                </a>
+            </div>
+
+            <div class="admin-search-container">
+                <input type="text" placeholder="Search by title, author, etc.">
+                <button class="admin-btn admin-btn-primary">Search</button>
+            </div>
+
+            <div class="admin-book-list">
+
+                <div class="admin-book-list-header">
+                    <div>Title</div>
+                    <div>Author</div>
+                    <div>Upload Date</div>
+                    <div>Uploader</div>
+                    <div class="admin-actions">Actions</div>
+                </div>
+
+
+                {% for book in page_obj %}
+
+
+                    <div class="admin-book-list-item">
+                        <div data-label="Title">{{ book.title }}</div>
+                        <div data-label="Author">{{ book.author }}</div>
+                        <div data-label="Upload Date">{{ book.upload_time }}</div>
+                        <div data-label="Uploader">{{ book.uploader }}</div>
+                        <div class="admin-actions">
+                            <a href="{% url 'admin_book_edit' book.id %}" class="admin-btn admin-btn-edit">Edit</a>
+                            <form method="POST"
+                                  action="{% url 'admin_book_delete' book.id %}"
+                                  style="display: inline;">
+                                
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="admin-btn admin-btn-danger"
+
+                                        onclick="return confirm('Are you sure you want to delete the book 《{{ book.title }}》? This action cannot be undone!');">
+
+                                    Delete
+
+                                </button>
+
+
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No content.</p>
+
+                {% endfor %}
+
+
+                <nav class="admin-pagination">
+
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    {% else %}
+                        <a href="#" class="admin-disabled" onclick="return false;">Previous</a>
+                    {% endif %}
+
+                    {% for i in page_obj.paginator.get_elided_page_range %}
+
+                        {% if i == page_obj.paginator.ELLIPSIS %}
+                            <span>...</span>
+
+                        {% elif i == page_obj.number %}
+                            <a href="#" class="admin-active">{{ i }}</a>
+
+                        {% else %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    {% else %}
+                        <a href="#" class="admin-disabled" onclick="return false;">Next</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </main>
+    </div>
+
+
+{% endblock %}

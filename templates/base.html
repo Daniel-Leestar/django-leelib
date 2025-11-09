@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<script src="{% static '/js/jquery.js' %}"></script>
+<link rel="stylesheet" href="{% static 'style.css' %}">
+<script>
+    $(document).ready(function () {
+        let dropdownVisible = false;
+
+
+        {#var homeUrl = "<?= home_url()?>";#}
+        {#// 对 URL 进行编码#}
+        {#var encodedUrl = encodeURIComponent(homeUrl);#}
+        {#// 构建登录链接#}
+        {#var loginUrl = "<?= home_url()?>/wp-login.php?redirect_to=" + encodedUrl;#}
+        {#$('.replace-link').attr('href', loginUrl);#}
+
+
+        $(".dropbtn").click(function () {
+            if (dropdownVisible) {
+                $(".dropdown").css("display", "none");
+            } else {
+                $(".dropdown").css("display", "flex");
+            }
+            dropdownVisible = !dropdownVisible;
+        });
+    })
+</script>
+
+
+<body style="margin-top: 0px!important;" lang="">
+
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="/" style="text-decoration: none;cursor: pointer;">
+
+                <div class="logoimg">
+                    <img src="{% static 'img/logo.png' %}" alt="">
+
+                </div>
+                <h1>Leelib</h1>
+            </a>
+
+
+        </div>
+        <div class="navright drop">
+            <div class="dropbtn">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <div class="dropdown">
+                <a href="{% url 'books_search' %}" class="navitem">Search</a>
+{#                <form id="language-switcher" method="get" action="">#}
+{#                                        <label for="language-switcher-locales">#}
+{#                                            <span class="dashicons dashicons-translation" aria-hidden="true"></span>#}
+{#                                            <span class="screen-reader-text">语言</span>#}
+{#                                        </label>#}
+{#                                        <select name="wp_lang" id="language-switcher-locales" onchange="this.form.submit()">#}
+{#                                            <option value="en_US" <?php if($current_language=='en_US'){echo "selected";} ?>>English</option>#}
+{#                                            <option value="zh_CN" <?php if($current_language=='zh_CN'){echo "selected";} ?>>简体中文</option>#}
+{#                                            <option value="ja" <?php if($current_language=='ja'){echo "selected";} ?>>日本語</option>#}
+{#                                        </select>#}
+{#                    <noscript><input type="submit" value="更改"></noscript>#}
+{#                </form>#}
+
+                {% if request.user.is_authenticated %}
+                    <a class="navitem" href="{% url 'books_bookself' %}">Bookshelf</a>
+                    <a class="navitem" href="{% url 'admin:index' %}">Board</a>
+                    <a class="navitem" href="{% url 'admin_book' %}">Board (Preview)</a>
+                {% endif %}
+
+                <div class="userinfo">
+                    {% if request.user.is_authenticated %}
+                        <div class="userimgname">
+                            <img src="{% static 'img/ava.png' %}" alt="">
+                        <a href="{% url 'portfolio' %}" id="username">{{ user.first_name }} {{ user.last_name }}</a>
+                        </div>
+                        <a href="{% url 'logout' %}">
+                            <button class="loginbtn">Logout</button>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="replace-link">
+                            <button class="loginbtn">Login</button>
+                        </a>
+                    {% endif %}
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div>
+</header>
+<body>
+
+
+{% block content %}
+{% endblock %}
+
+
+<div class="footer">
+    <h2>
+        <span>Free</span> Books shared by Internet, <span>Great</span> knowledge, <span>Great</span> freedom
+    </h2>
+    <p>&copy <span>Leelib</span> Library 2025</p>
+</div>
+</body>

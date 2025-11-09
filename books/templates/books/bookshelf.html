@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+    <main class="mainpage">
+        <h1 class="maintitle">My Bookshelf</h1>
+        <div class="books">
+            {% for book in page_obj %}
+                <div class="booksitem">
+                    <a href="{% url 'books_detail' book.id %}">
+                        <img src="/media/{{ book.cover }}" alt="">
+                    </a>
+                </div>
+                {% empty %}
+                <p style="width: 100%;margin: 150px 0;text-align: center;">Go shelve the new books</p>
+            {% endfor %}
+        </div>
+
+        <!-- 分页导航 -->
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% else %}
+                <span class="disabled">First</span>
+                <span class="disabled">Previous</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% else %}
+                <span class="disabled">Next</span>
+                <span class="disabled">Last</span>
+            {% endif %}
+        </div>
+    </main>
+
+
+
+
+{% endblock %}

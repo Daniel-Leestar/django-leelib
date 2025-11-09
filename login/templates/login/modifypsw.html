@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Change Password</title>
+    <link rel="stylesheet" href="{% static 'login/style.css' %}">
+    <script src="{% static 'login/js/jQuery.js' %}"></script>
+    <script>
+        $().ready(function () {
+
+            //按钮点击事件
+            $("#infosub").click(function () {
+                var psw = $("#psw").val();
+                var email = $("#email").val();
+                var fname = $("#fname").val();
+                var lname = $("#lname").val();
+
+                //每个input判定
+                $(".ifnull").each(function () {
+                    if ($(this).val() === "") {
+                        $(this).css("border-color", "red"); // 如果为空，则改变边框颜色为红色
+                    } else {
+                        $(this).css("border-color", ""); // 如果不为空，恢复默认边框颜色
+                    }
+                });
+
+                if (psw == "" || email == "" || fname == "" || lname == "") {
+                    $(".warn").text("Please fill in the information completely");
+                }
+            })
+
+        })
+    </script>
+</head>
+<body>
+<!--navbar-->
+<div class="navbar">
+    <div class="logo">
+
+        <a href="/">
+
+            <div class="logoimg">
+                <!--<img src="img/logo.png" alt="">-->
+                <canvas id="logoCanvas" width="50" height="50"></canvas>
+                <script>
+                    const canvas = document.getElementById('logoCanvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Load the logo image
+                    const logoImg = new Image();
+                    logoImg.src = '{% static 'login/img/logo.png' %}'; // Replace 'your_logo.png' with your logo file path
+
+                    // Function to draw the logo
+                    function drawLogo() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        // Draw the background
+                        ctx.fillStyle = '#059377';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        // Draw the logo image
+                        ctx.drawImage(logoImg, 0, 0, canvas.width, canvas.height);
+                    }
+
+                    // Function to animate the logo with ripples
+                    function animateLogo() {
+                        let radius = 0;
+                        const maxRadius = Math.sqrt(Math.pow(canvas.width / 2, 2) + Math.pow(canvas.height / 2, 2));
+                        const animationSpeed = 1;
+
+                        function drawFrame() {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            drawLogo();
+
+                            // Draw ripples
+                            ctx.beginPath();
+                            ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2);
+                            ctx.strokeStyle = 'rgba(255, 255, 255, ' + (1 - radius / maxRadius) + ')';
+                            ctx.lineWidth = 2;
+                            ctx.stroke();
+
+                            radius += animationSpeed;
+                            if (radius > maxRadius) {
+                                radius = 0;
+                            }
+
+                            requestAnimationFrame(drawFrame);
+                        }
+
+                        drawFrame();
+                    }
+
+                    // Start the animation
+                    animateLogo();
+                </script>
+            </div>
+            <h1>Leelib</h1>
+
+        </a>
+
+
+    </div>
+    <a href="{% url 'portfolio' %}">
+        <button class="loginbtn">Return</button>
+    </a>
+</div>
+
+<!--主页面-->
+<div class="mainpage">
+    <div class="mainleft">
+        <div class="content">
+            <h1 style="margin-top: 15%;margin-bottom: 45px;">Change Your Password</h1>
+            <form action="{% url 'modifypsw' %}" method="post">
+                {% csrf_token %}
+                <p class="infofront">Current Password</p>
+                <input type="password" class="otherinput ifnull" id="email" name="old_password">
+                <p class="infofront">Password</p>
+                <input type="password" class="otherinput ifnull" id="psw" name="new_password1">
+
+                <p class="infofront">Check Password</p>
+                <input type="password" class="otherinput ifnull" id="psw" name="new_password2">
+                <input type="submit" id="infosub" value="Login">
+            </form>
+            <div class="warn">{{ err }}</div>
+            <p class="undersub">&copy Copyright</p>
+        </div>
+    </div>
+
+
+    <div class="mainright">
+        <div class="rightcontent">
+            <div class="colu col1">
+                <div class="coluimg"><img src="../../static/login/img/eg1.jpg" alt=""></div>
+                <div class="coluimg"><img src="../../static/login/img/eg2.jpg" alt=""></div>
+                <div class="coluimg"><img src="../../static/login/img/eg3.jpg" alt=""></div>
+            </div>
+            <div class="colu col2">
+                <div class="coluimg"><img src="../../static/login/img/eg4.jpg" alt=""></div>
+                <div class="coluimg"><img src="../../static/login/img/eg5.jpg" alt=""></div>
+                <div class="coluimg"><img src="../../static/login/img/eg6.jpg" alt=""></div>
+            </div>
+            <div class="colu col2">
+                <div class="coluimg"><img src="../../static/login/img/eg7.jpg" alt=""></div>
+                <div class="coluimg"><img src="../../static/login/img/eg8.jpg" alt=""></div>
+                <div class="coluimg"><img src="../../static/login/img/eg9.jpg" alt=""></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
