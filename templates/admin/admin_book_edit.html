@@ -115,13 +115,9 @@
     <link rel="stylesheet" href="{% static 'admin/style.css' %}">
     <div class="admin-admin-wrapper">
 
-        <nav class="admin-sidebar">
-            <ul>
-                <li><a href="{% url 'admin_book' %}" class="admin-active">Books</a></li>
-                <li><a href="#">Tags</a></li>
-                <li><a href="#">Users</a></li>
-            </ul>
-        </nav>
+        {% with 'books' as active_page %}
+            {% include 'admin/admin_sidebar.html' %}
+        {% endwith %}
 
         <main class="admin-main-content">
             <form action="{% url 'admin_book_edit' book.id %}" method="post" enctype="multipart/form-data"

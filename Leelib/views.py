@@ -124,6 +124,7 @@ def admin_book_add(request):
 
 @login_required
 def admin_book_delete(request, book_id):
+    next_url = request.META.get('HTTP_REFERER', '/')
     print("start delete")
     """
     视图: 删除书本
@@ -156,7 +157,7 @@ def admin_book_delete(request, book_id):
         book.delete()
 
         # 4. 操作成功，重定向回书本列表页
-        return redirect('admin_book')  # 假设你的书本列表页 URL name 是 'admin_book'
+        return redirect(next_url)  # 假设你的书本列表页 URL name 是 'admin_book'
 
     except Exception as e:
         # (可选) 处理删除失败的异常
@@ -165,8 +166,6 @@ def admin_book_delete(request, book_id):
 
 
 def admin_book_edit(request, book_id):
-
-
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     book = get_object_or_404(Book, pk=book_id)
 
@@ -256,3 +255,62 @@ def admin_book_edit(request, book_id):
     # 准备 tags 字符串用于回显
     current_tags = ', '.join([tag.name for tag in book.tags.all()])
     return render(request, 'admin/admin_book_edit.html', {'current_tags': current_tags, 'book': book})
+
+
+def admin_tag(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return render(request, 'no-permission.html')
+
+    tags = Tag.objects.all()
+    paginator = Paginator(tags, 8)
+    page = request.GET.get('page')
+    page_obj = paginator.get_page(page)
+    return render(request, 'admin/admin_tag.html', {'page_obj': page_obj})
+
+
+def admin_tag_add(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return render(request, 'no-permission.html')
+
+    if request.method == 'POST':
+        name = request.POST.get('name', "").strip()
+        if name:
+            Tag.objects.get_or_create(name=name)
+    return redirect('admin_tag')
+
+
+def admin_tag_delete(request):
+    next_url = request.META.get('HTTP_REFERER', '/')
+    if not request.user.is_superuser and not request.user.is_staff:
+        return render(request, 'no-permission.html')
+
+    if request.method == 'POST':
+        print("start to delete tag")
+        tag_id = request.POST.get('id', "").strip()
+        if tag_id:
+            tag_to_delete = get_object_or_404(Tag, id=tag_id)
+            tag_to_delete.delete()
+            print("delete tag")
+    return redirect(next_url)
+
+
+def admin_tag_edit(request):
+    next_url = request.META.get('HTTP_REFERER', '/')
+    if request.method == "POST":
+        # 2. 获取用户提交的新名字
+        new_name = request.POST.get("name", "").strip()
+        tagid = request.POST.get("id", "").strip()
+
+        tag = get_object_or_404(Tag, id=tagid)
+
+        if new_name:
+            # 可选：检查新名字是否和其他标签重复 (虽然 unique=True 在数据库层面会报错，但提前检查用户体验更好)
+            if Tag.objects.filter(name=new_name).exclude(id=tagid).exists():
+                # 这里可以添加一个错误消息传递给前端
+                print("该标签名已存在")
+                # return render(...)
+            else:
+                # 3. 更新并保存
+                tag.name = new_name
+                tag.save()
+    return redirect(next_url)  # 更新成功，跳回列表页

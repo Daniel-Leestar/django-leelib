@@ -29,10 +29,13 @@ urlpatterns = [
     path('admin-book-add/', views.admin_book_add, name='admin_book_add'),
     path('admin-book-delete/<int:book_id>/', views.admin_book_delete, name='admin_book_delete'),
     path('admin-book-edit/<int:book_id>/', views.admin_book_edit, name='admin_book_edit'),
+    path('admin-tag/', views.admin_tag, name='admin_tag'),
+    path('admin-tag-add/', views.admin_tag_add, name='admin_tag_add'),
+    path('admin-tag-delete/', views.admin_tag_delete, name='admin_tag_delete'),
+    path('admin-tag-edit/', views.admin_tag_edit, name='admin_tag_edit'),
     path('', include('login.urls')),
     path('', include('books.urls'))
 ]
-
 
 if settings.DEBUG is False:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

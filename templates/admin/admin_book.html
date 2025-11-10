@@ -2,21 +2,18 @@
 {% load static %}
 {% block content %}
 
+
     <link rel="stylesheet" href="{% static 'admin/style.css' %}">
     <div class="admin-admin-wrapper">
-
-        <nav class="admin-sidebar">
-            <ul>
-                <li><a href="#" class="admin-active">Books</a></li>
-                <li><a href="#">Tags</a></li>
-                <li><a href="#">Users</a></li>
-            </ul>
-        </nav>
+        {% with 'books' as active_page %}
+            {% include 'admin/admin_sidebar.html' %}
+        {% endwith %}
 
         <main class="admin-main-content">
 
             <div class="admin-content-header">
-                <h1>Books Management {% if not user.is_staff and not user.is_superuser %}<span style="color: #dc3545;">No Permission</span>{% endif %}</h1>
+                <h1>Books Management {% if not user.is_staff and not user.is_superuser %}
+                    <span style="color: #dc3545;">No Permission</span>{% endif %}</h1>
                 <a href="{% url 'admin_book_add' %}">
                     <button class="admin-btn admin-btn-primary">Add New Book</button>
                 </a>
@@ -51,7 +48,7 @@
                             <form method="POST"
                                   action="{% url 'admin_book_delete' book.id %}"
                                   style="display: inline;">
-                                
+
                                 {% csrf_token %}
 
                                 <button type="submit"

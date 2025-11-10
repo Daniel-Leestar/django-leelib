@@ -1,0 +1,7 @@
+<nav class="admin-sidebar">
+    <ul>
+        <li><a href="{% url 'admin_book' %}" class="{% if active_page == 'books' %}admin-active{% endif %}">Books</a></li>
+        <li><a href="{% url 'admin_tag' %}" class="{% if active_page == 'tags' %}admin-active{% endif %}">Tags</a></li>
+        <li><a href="#">Users</a></li>
+    </ul>
+</nav>
