@@ -168,6 +168,12 @@ a {
     border-top-right-radius: 5px;
 }
 
+.admin-book-list-header a,.admin-tag-list-header a{
+    color: #000;
+}
+
+
+
 .admin-tag-list-header {
     display: grid;
     grid-template-columns: 1.5fr 1.5fr 0.8fr;
@@ -460,14 +466,14 @@ a {
 .tagadd-content{
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
     justify-content: space-between;
 }
 
 #tagname,#tagname_edit{
     width: 100%;
-    font-size: 15px;
-    padding: 5px 0;
+    font-size: 16px;
+    padding: 10px 0;
     border: 1px solid #d3d3d3;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -477,20 +483,20 @@ a {
     border-radius: 5px;
     width: 45%;
     font-size: 15px;
-    padding: 4px 0;
+    padding: 10px 0;
     cursor: pointer;
     border: none;
     cursor: pointer;
 }
 
 #tagadd-contentsub,#tagedit-contentsub {
-  background-color: #05725a;
+  background-color: #059377;
     color: #fff;
 }
 
 #tagadd-contentclose{
-    color: #05725a;
-    border: 1px solid #05725a;
+    color: #059377;
+    border: 1px solid #059377;
     background: none;
 }
 

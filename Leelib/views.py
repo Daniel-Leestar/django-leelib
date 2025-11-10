@@ -30,12 +30,18 @@ def portfolio(request):
 def myadmin(request):
     user = request.user
 
+    # 排序
+    sort_by = request.GET.get('sort', '-upload_time')
+    allowed_sort_fields = ['upload_time', '-upload_time', 'title', '-title', 'author', '-author']
+    if sort_by not in allowed_sort_fields:
+        sort_by = '-upload_time'
+
     if not request.user.is_authenticated:
         return render(request, 'no-permission.html')
 
     if user.is_superuser:
         # 2. 如果是超级管理员，获取所有书本
-        books = Book.objects.all().order_by('-upload_time')
+        books = Book.objects.all().order_by(sort_by)
     else:
         # 3. 如果只是普通 staff，只获取自己上传的 (uploader=user)
         books = Book.objects.filter(uploader=user).order_by('-upload_time')
@@ -44,7 +50,7 @@ def myadmin(request):
     page_number = request.GET.get('page')  # 获取页码参数
     page_obj = paginator.get_page(page_number)  # 获取当前页对象
 
-    return render(request, 'admin/admin_book.html', {'page_obj': page_obj})
+    return render(request, 'admin/admin_book.html', {'page_obj': page_obj, 'sort_by': sort_by})
 
 
 @login_required
@@ -258,17 +264,24 @@ def admin_book_edit(request, book_id):
 
 
 def admin_tag(request):
+    sort_by = request.GET.get('sort', 'id')
+    allowed_sort_fields = ['id', '-id', 'name', '-name']
+    if sort_by not in allowed_sort_fields:
+        sort_by = 'id'
+
     if not request.user.is_superuser and not request.user.is_staff:
         return render(request, 'no-permission.html')
 
-    tags = Tag.objects.all()
+    tags = Tag.objects.all().order_by(sort_by)
     paginator = Paginator(tags, 8)
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
-    return render(request, 'admin/admin_tag.html', {'page_obj': page_obj})
+    return render(request, 'admin/admin_tag.html', {'page_obj': page_obj, 'sort_by': sort_by})
 
 
 def admin_tag_add(request):
+    next_url = request.META.get('HTTP_REFERER', '/')
+
     if not request.user.is_superuser and not request.user.is_staff:
         return render(request, 'no-permission.html')
 
@@ -276,7 +289,7 @@ def admin_tag_add(request):
         name = request.POST.get('name', "").strip()
         if name:
             Tag.objects.get_or_create(name=name)
-    return redirect('admin_tag')
+    return redirect(next_url)
 
 
 def admin_tag_delete(request):

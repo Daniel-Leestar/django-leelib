@@ -29,7 +29,15 @@
                 <div class="admin-book-list-header">
                     <div>Title</div>
                     <div>Author</div>
-                    <div>Upload Date</div>
+                    <div>
+                        <a href="{% url 'admin_book' %}?sort={% if sort_by == 'upload_time' %}-{% endif %}upload_time">
+                            Upload Date
+
+                            {% if sort_by == 'upload_time' or sort_by == '' %}
+                                <span class="sort-icon">▲</span> {% elif sort_by == '-upload_time' %}
+                                <span class="sort-icon">▼</span> {% endif %}
+                        </a>
+                    </div>
                     <div>Uploader</div>
                     <div class="admin-actions">Actions</div>
                 </div>
@@ -73,7 +81,7 @@
                 <nav class="admin-pagination">
 
                     {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        <a href="?sort={{ sort_by }}&page={{ page_obj.previous_page_number }}">Previous</a>
                     {% else %}
                         <a href="#" class="admin-disabled" onclick="return false;">Previous</a>
                     {% endif %}
@@ -87,14 +95,14 @@
                             <a href="#" class="admin-active">{{ i }}</a>
 
                         {% else %}
-                            <a href="?page={{ i }}">{{ i }}</a>
+                            <a href="?sort={{ sort_by }}&page={{ i }}">{{ i }}</a>
 
                         {% endif %}
 
                     {% endfor %}
 
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                        <a href="?sort={{ sort_by }}&page={{ page_obj.next_page_number }}">Next</a>
                     {% else %}
                         <a href="#" class="admin-disabled" onclick="return false;">Next</a>
                     {% endif %}
