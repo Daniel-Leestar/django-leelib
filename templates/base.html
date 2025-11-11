@@ -73,8 +73,7 @@
 
                 {% if request.user.is_authenticated %}
                     <a class="navitem" href="{% url 'books_bookself' %}">Bookshelf</a>
-                    <a class="navitem" href="{% url 'admin:index' %}">Board</a>
-                    <a class="navitem" href="{% url 'admin_book' %}">Board (Preview)</a>
+                    <a class="navitem" href="{% url 'admin_book' %}">Board</a>
                 {% endif %}
 
                 <div class="userinfo">

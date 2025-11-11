@@ -131,7 +131,7 @@ a {
     padding: 6px 12px;
 }
 
-.admin-btn-edit {
+.admin-btn-edit,.admin-btn-active {
     background-color: #FFC107;
     color: #fff;
     font-size: 14px;
@@ -168,7 +168,7 @@ a {
     border-top-right-radius: 5px;
 }
 
-.admin-book-list-header a,.admin-tag-list-header a{
+.admin-book-list-header a,.admin-tag-list-header a,.admin-user-list-header a{
     color: #000;
 }
 
@@ -187,9 +187,20 @@ a {
     border-top-right-radius: 5px;
 }
 
-.admin-book-list-item {
+.admin-book-list-item{
     display: grid;
     grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
+    gap: 20px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+    font-size: 15px;
+    color: #555;
+}
+
+.admin-user-list-header{
+    display: grid;
+    grid-template-columns: 0.5fr 1.5fr 2.5fr 0.7fr 0.7fr 0.7fr 2fr;
     gap: 20px;
     padding: 25px 20px;
     border-bottom: 1px solid #d3d3d3;
@@ -209,11 +220,22 @@ a {
     color: #555;
 }
 
-.admin-book-list-item:last-child, .admin-tag-list-item:last-child {
+.admin-user-list-item {
+    display: grid;
+    grid-template-columns: 0.5fr 1.5fr 2.5fr 0.7fr 0.7fr 0.7fr 2fr;
+    gap: 20px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+    font-size: 15px;
+    color: #555;
+}
+
+.admin-book-list-item:last-child, .admin-tag-list-item:last-child, .admin-user-list-item:last-child {
     border-bottom: none;
 }
 
-.admin-book-list-item .admin-actions, .admin-tag-list-item .admin-actions {
+.admin-book-list-item .admin-actions, .admin-tag-list-item .admin-actions,.admin-user-list-item .admin-actions {
     text-align: center;
     display: flex;
     flex-wrap: wrap;
@@ -470,7 +492,7 @@ a {
     justify-content: space-between;
 }
 
-#tagname,#tagname_edit{
+#tagname,#tagname_edit,.admin-edit-input{
     width: 100%;
     font-size: 16px;
     padding: 10px 0;
@@ -508,6 +530,27 @@ a {
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+.progress-box-user {
+    width: 400px;
+    background-color: white;
+    padding: 30px 50px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.progress-box-user .info-value{
+    border: 1px solid #d3d3d3;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.progress-box-user .info-label{
+    line-height: 39px;
+}
+
+
+
 
 #upload-overlay progress {
     width: 100%;
@@ -584,11 +627,11 @@ a {
     }
 
     /* 关键：将列表转换为卡片视图 */
-    .admin-book-list-header, .admin-tag-list-header {
+    .admin-book-list-header, .admin-tag-list-header,.admin-user-list-header {
         display: none; /* 隐藏桌面版的列表头 */
     }
 
-    .admin-book-list-item, .admin-tag-list-item {
+    .admin-book-list-item, .admin-tag-list-item,.admin-user-list-item {
         display: block; /* 覆盖 grid 布局，变为块级 */
         padding: 15px;
         margin-bottom: 10px;
@@ -600,20 +643,20 @@ a {
 
 
     /* 使用 data-label 显示标签 */
-    .admin-book-list-item div, .admin-tag-list-item div {
+    .admin-book-list-item div, .admin-tag-list-item div,.admin-user-list-item div {
         display: flex;
         justify-content: space-between;
         padding: 8px 0;
         border-bottom: 1px solid #d3d3d3;
     }
 
-    .admin-book-list-item div::before, .admin-tag-list-item div::before {
+    .admin-book-list-item div::before, .admin-tag-list-item div::before,.admin-user-list-item div::before {
         content: attr(data-label); /* 显示 data-label 的内容 */
         font-weight: bold;
         padding-right: 15px;
     }
 
-    .admin-book-list-item .admin-actions, .admin-tag-list-item .admin-actions {
+    .admin-book-list-item .admin-actions, .admin-tag-list-item .admin-actions,.admin-user-list-item .admin-actions {
         border-bottom: none;
         padding-top: 15px;
         display: flex;
@@ -624,16 +667,16 @@ a {
         width: 100%;
     }
 
-    .admin-book-list-item .admin-actions::before, .admin-tag-list-item .admin-actions::before {
+    .admin-book-list-item .admin-actions::before, .admin-tag-list-item .admin-actions::before, .admin-user-list-item .admin-actions::before {
         display: none; /* 动作按钮不需要标签 */
     }
 
-    .admin-book-list-item .admin-actions .admin-btn-danger, .admin-btn-edit, .admin-tag-list-item {
-        width: 100%; /* 删除按钮占满宽度 */
+    .admin-actions .admin-btn-danger, .admin-btn-edit, .admin-tag-list-item,.admin-btn-active {
+        width: 100%!important; /* 删除按钮占满宽度 */
         padding: 10px;
     }
 
-    .admin-btn-edit {
+    .admin-btn-edit,.admin-btn-active {
         margin-bottom: 10px;
     }
 

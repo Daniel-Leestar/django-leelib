@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from books.models import Book, Tag
+from login.models import User
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse, HttpResponseForbidden  # [新增] 导入 JsonResponse
 from django.urls import reverse
 from django.db import transaction  # 导入事务，确保数据一致性
-from .forms import BookForm
+from django.db.models import Q  # 用于搜索
+from .forms import BookForm, UserEditForm
 
 
 def index(request):
@@ -327,3 +329,95 @@ def admin_tag_edit(request):
                 tag.name = new_name
                 tag.save()
     return redirect(next_url)  # 更新成功，跳回列表页
+
+
+def admin_user(request):
+    if not request.user.is_superuser:
+        return render(request, 'no-permission.html')
+    """用户列表视图"""
+    query = request.GET.get('q')
+    if query:
+        # 实现简单的搜索功能
+        users = User.objects.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query)
+        ).order_by('id')
+    else:
+        users = User.objects.all().order_by('id')
+
+    paginator = Paginator(users, 8)
+    page = request.GET.get('page')
+    page_obj = paginator.get_page(page)
+
+    form = UserEditForm()
+    context = {'form': form,'page_obj': page_obj, 'query': query}
+    return render(request, 'admin/admin_user.html', context)
+
+
+@permission_required('is_superuser', raise_exception=True)
+def admin_user_active(request):
+    """激活/禁用用户（POST请求）"""
+    if request.method == 'POST':
+        user_id = request.POST.get('id')
+        user = get_object_or_404(User, pk=user_id)
+        user.is_active = not user.is_active
+        user.save()
+    # 操作完成后返回用户列表或详情页
+    return redirect('admin_user')
+
+
+@permission_required('is_superuser', raise_exception=True)
+def admin_user_edit(request):
+    """
+    用户编辑视图：通过隐藏字段中的 ID 来处理用户
+    """
+    if request.method == 'POST':
+        # 1. POST 请求：从表单中获取隐藏的 user_id
+        user_id = request.POST.get('user_id')
+        print("修改用户信息，user id:",user_id)
+        if not user_id:
+            # 如果没有 ID，则返回错误或重定向
+            # 实际应用中需要更好的错误处理
+            return redirect('admin_user')
+
+        user = get_object_or_404(User, pk=user_id)
+
+        # 2. 绑定表单数据和用户实例
+        form = UserEditForm(request.POST, instance=user)
+
+        if form.is_valid():
+            # 3. 数据验证成功：保存表单
+            form.save()
+            return redirect('admin_user')
+
+        # 如果表单验证失败，需要重新渲染表单（并传递 user 实例）
+        # ⚠️ 注意：如果表单验证失败，需要确保 form 和 user 实例被正确传递到渲染逻辑
+
+    else:
+        # 4. GET 请求：此视图现在不能直接用于显示空白表单，
+        # 因为我们不知道要编辑哪个用户。
+        #
+        # 如果是 GET 请求，通常应该重定向回用户列表，或者
+        # 要求 URL 中有查询参数，例如 ?user_id=123
+        user_id = request.GET.get('user_id')
+        if not user_id:
+            return redirect('admin_user') # 如果没有ID，返回列表
+
+        user = get_object_or_404(User, pk=user_id)
+        form = UserEditForm(instance=user)
+
+    print("check",form)
+    context = {
+        'form': form,
+        'user_id': user.pk, # 用于隐藏字段
+        'last_login_time': user.last_login if user.last_login else 'N/A'
+    }
+
+    # 渲染包含表单的模板
+    return render(request, 'admin/admin_user.html', context)
+
+def admin_core(request):
+    if not request.user.is_superuser:
+        return render(request, 'no-permission.html')
+    return render(request, 'admin/admin_core.html')

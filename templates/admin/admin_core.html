@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <link rel="stylesheet" href="{% static 'admin/style.css' %}">
+    <div class="admin-admin-wrapper">
+
+        {% with 'core' as active_page %}
+            {% include 'admin/admin_sidebar.html' %}
+        {% endwith %}
+        <div class="admin-main-content">
+            <iframe src="/admin"
+                    style="width: 100%; height: 800px; border: 1px solid #ccc;"
+                    title="Django Admin Users">
+            </iframe>
+        </div>
+
+
+    </div>
+
+
+
+
+{% endblock %}

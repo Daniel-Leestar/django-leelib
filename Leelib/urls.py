@@ -24,7 +24,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('test/', views.test),
     path('portfolio/', views.portfolio, name='portfolio'),
-    path('admin/', admin.site.urls, name='temp_admin'),
+    path('admin/', admin.site.urls, name='core_admin'),
     path('admin-book/', views.myadmin, name='admin_book'),
     path('admin-book-add/', views.admin_book_add, name='admin_book_add'),
     path('admin-book-delete/<int:book_id>/', views.admin_book_delete, name='admin_book_delete'),
@@ -33,6 +33,10 @@ urlpatterns = [
     path('admin-tag-add/', views.admin_tag_add, name='admin_tag_add'),
     path('admin-tag-delete/', views.admin_tag_delete, name='admin_tag_delete'),
     path('admin-tag-edit/', views.admin_tag_edit, name='admin_tag_edit'),
+    path('admin-user/', views.admin_user, name='admin_user'),
+    path('admin-user-active/', views.admin_user_active, name='admin_user_active'),
+    path('admin-user-edit/', views.admin_user_edit, name='admin_user_edit'),
+    path('admin-user-core/', views.admin_core, name='admin_core'),
     path('', include('login.urls')),
     path('', include('books.urls'))
 ]

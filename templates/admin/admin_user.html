@@ -5,14 +5,14 @@
     <link rel="stylesheet" href="{% static 'admin/style.css' %}">
     <div class="admin-admin-wrapper">
 
-        {% with 'tags' as active_page %}
+        {% with 'users' as active_page %}
             {% include 'admin/admin_sidebar.html' %}
         {% endwith %}
 
         <main class="admin-main-content">
 
             <div class="admin-content-header">
-                <h1>Tags Management {% if not user.is_superuser %}
+                <h1>Users Management {% if not user.is_superuser %}
                     <span style="color: #dc3545;">No Permission</span>{% endif %}</h1>
 
                 <button class="admin-btn admin-btn-primary" id="add_tag">Add New Tag</button>
@@ -26,9 +26,9 @@
 
             <div class="admin-book-list">
 
-                <div class="admin-tag-list-header">
+                <div class="admin-user-list-header">
                     <div>
-                        
+
                         <a href="{% url 'admin_tag' %}?sort={% if sort_by == 'id' %}-{% endif %}id">
                             ID
 
@@ -36,31 +36,69 @@
                                 <span class="sort-icon">▲</span> {% elif sort_by == '-id' %}
                                 <span class="sort-icon">▼</span> {% endif %}
                         </a>
-                        
+
                     </div>
-                    <div>Tag</div>
+                    <div>Name</div>
+                    <div>Email</div>
+                    <div>Active</div>
+                    <div>Staff</div>
+                    <div>Superuser</div>
                     <div class="admin-actions">Actions</div>
                 </div>
 
 
-                {% for tag in page_obj %}
+                {% for user in page_obj %}
 
 
-                    <div class="admin-tag-list-item">
-                        <div data-label="Title">{{ tag.id }}</div>
-                        <div data-label="Author">{{ tag.name }}</div>
+                    <div class="admin-user-list-item">
+                        <div data-label="id">{{ user.id }}</div>
+                        <div><span data-label="fname">{{ user.first_name }}</span> <span
+                                data-label="lname">{{ user.last_name }}</span></div>
+                        <input type="hidden" value="{{ user.last_login }}" data-label="lastlogin">
+                        <div data-label="email">{{ user.email }}</div>
+                        <div data-label="">
+                            {% if user.is_active %}
+                                ✅ 活跃
+                            {% else %}
+                                ❌ 禁用
+                            {% endif %}
+                        </div>
+                        <div data-label="staff">
+                            <input type="hidden" value="{{ user.is_staff }}">
+                            {% if user.is_staff %}
+                                ✅
+                            {% else %}
+                                ❌
+                            {% endif %}
+                        </div>
+                        <div data-label="superuser">
+                            <input type="hidden" value="{{ user.is_superuser }}">
+                            {% if user.is_superuser %}
+                                ✅
+                            {% else %}
+                                ❌
+                            {% endif %}
+                        </div>
                         <div class="admin-actions">
+                            <form method="post" action="{% url 'admin_user_active' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ user.id }}" name="id">
+                                <button class="admin-btn admin-btn-active" type="submit"
+                                        onclick="return confirm('Confirm this action. This action cannot be undone!');">
+                                    {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                                </button>
+                            </form>
                             <a class="admin-btn admin-btn-edit">Edit</a>
                             <form method="POST"
-                                  action="{% url 'admin_tag_delete' %}"
+                                  action=""
                                   style="display: inline;">
 
                                 {% csrf_token %}
-                                <input type="hidden" name="id" value="{{ tag.id }}">
+                                <input type="hidden" name="id" value="">
                                 <button type="submit"
                                         class="admin-btn admin-btn-danger"
 
-                                        onclick="return confirm('Are you sure you want to delete the tag {{ book.title }}? This action cannot be undone!');">
+                                        onclick="return confirm('Are you sure you want to delete the User {{ book.title }}? This action cannot be undone!');">
 
                                     Delete
 
@@ -122,16 +160,51 @@
     </div>
 
     <div id="tagedit-overlay">
-        <div class="progress-box">
-            <h3 style="color: #059377;margin-bottom: 20px;">Edit Tag</h3>
-            <form class="tagadd-content" action="{% url 'admin_tag_edit' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" id="tagid_edit" name="id">
-                <input type="text" id="tagname_edit" placeholder="Tag Name" name="name">
-                <input type="submit" class="tagadd-contentbtn" id="tagedit-contentsub">
-                <button class="tagadd-contentbtn" id="tagedit-contentclose" type="button">Close</button>
-            </form>
-        </div>
+    <div class="progress-box-user">
+        <form action="{% url 'admin_user_edit' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="" id="user_id">
+            <ul class="info-list">
+
+                <li>
+                    <span class="info-label">First Name</span>
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </li>
+                <li>
+                    <span class="info-label">Last Name</span>
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </li>
+                <li>
+                    <span class="info-label">Email</span>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </li>
+
+                <li>
+                    <span class="info-label">Staff</span>
+                    {{ form.is_staff }}
+                </li>
+                <li>
+                    <span class="info-label">Super User</span>
+                    {{ form.is_superuser }}
+                </li>
+
+                <li>
+                    <span class="info-label">Last Login</span>
+                    <span style="line-height: 39px;" id="user_lastlogin">{{ last_login_time }}</span>
+                </li>
+
+                <li>
+                    <input type="submit" class="tagadd-contentbtn" id="tagadd-contentsub" value="Save Changes">
+                    <button class="tagadd-contentbtn" id="tagedit-contentclose" type="button">Close</button>
+                </li>
+            </ul>
+
+        </form>
+    </div>
+        
     </div>
 
     <script>
@@ -140,25 +213,35 @@
                 $("#tagadd-overlay").css('display', 'flex');
             })
 
-            $("#tagadd-contentclose").click(function () {
-                $("#tagadd-overlay").css('display', 'none');
+            $("#tagedit-contentclose").click(function () {
+                $("#tagedit-overlay").css('display', 'none');
             })
 
             $(".admin-btn-edit").click(function () {
-                var $item = $(this).closest('.admin-tag-list-item');
+                var $item = $(this).closest('.admin-user-list-item');
 
                 // 2. 在父容器内查找对应的数据元素
                 // 使用 .find() 结合 data-label 属性或者是类名、位置来定位
                 // 注意：这里使用了 .text().trim() 来获取文本并去除可能存在的首尾空格
-                var tagId = $item.find('div[data-label="Title"]').text().trim();
-                var tagName = $item.find('div[data-label="Author"]').text().trim();
-                $("#tagedit-overlay").css('display', 'flex');
-                $("#tagname_edit").val(tagName);
-                $("#tagid_edit").val(tagId);
-            })
+                var user_id = $item.find('div[data-label="id"]').text().trim();
+                var FName = $item.find('span[data-label="fname"]').text().trim();
+                var LName = $item.find('span[data-label="lname"]').text().trim();
+                var Email = $item.find('div[data-label="email"]').text().trim();
+                var LastLogin = $item.find('input[data-label="lastlogin"]').val().trim();
+                var Staff = $item.find('div[data-label="staff"] input').val().trim();
+                var Superuser = $item.find('div[data-label="superuser"] input').val().trim();
 
-            $("#tagedit-contentclose").click(function () {
-                $("#tagedit-overlay").css('display', 'none');
+                var isStaff = (Staff === 'True');
+                var isSuperuser = (Superuser === 'True');
+
+                $("#tagedit-overlay").css('display', 'flex');
+                $("#user_firstname").val(FName);
+                $("#user_lastname").val(LName);
+                $("#user_email").val(Email);
+                $("#user_id").val(user_id);
+                $("#user_staff").prop('checked', isStaff);
+                $("#user_superuser").prop('checked', isSuperuser);
+                $("#user_lastlogin").text(LastLogin);
             })
         })
     </script>

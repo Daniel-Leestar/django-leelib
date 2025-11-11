@@ -135,3 +135,5 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 假设你的 BASE_DIR 像这样定义
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # 这样就允许相同域名（例如 localhost:8000）下的 iframe 加载。
