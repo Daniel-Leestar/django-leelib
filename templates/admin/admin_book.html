@@ -19,10 +19,10 @@
                 </a>
             </div>
 
-            <div class="admin-search-container">
-                <input type="text" placeholder="Search by title, author, etc.">
+            <form class="admin-search-container" action="" method="get">
+                <input type="text" placeholder="Search by title, author, uploader" name="q" {% if query %}value="{{ query }}" {% endif %}>
                 <button class="admin-btn admin-btn-primary">Search</button>
-            </div>
+            </form>
 
             <div class="admin-book-list">
 
@@ -30,7 +30,7 @@
                     <div>Title</div>
                     <div>Author</div>
                     <div>
-                        <a href="{% url 'admin_book' %}?sort={% if sort_by == 'upload_time' %}-{% endif %}upload_time">
+                        <a href="{% url 'admin_book' %}?sort={% if sort_by == 'upload_time' %}-{% endif %}upload_time&q={{ query }}">
                             Upload Date
 
                             {% if sort_by == 'upload_time' or sort_by == '' %}
@@ -78,10 +78,10 @@
                 {% endfor %}
 
 
-                <nav class="admin-pagination">
+                 <nav class="admin-pagination">
 
                     {% if page_obj.has_previous %}
-                        <a href="?sort={{ sort_by }}&page={{ page_obj.previous_page_number }}">Previous</a>
+                        <a href="?sort={{ sort_by }}&page={{ page_obj.previous_page_number }}&q={{ query }}">Previous</a>
                     {% else %}
                         <a href="#" class="admin-disabled" onclick="return false;">Previous</a>
                     {% endif %}
@@ -95,14 +95,14 @@
                             <a href="#" class="admin-active">{{ i }}</a>
 
                         {% else %}
-                            <a href="?sort={{ sort_by }}&page={{ i }}">{{ i }}</a>
+                            <a href="?sort={{ sort_by }}&page={{ i }}&q={{ query }}">{{ i }}</a>
 
                         {% endif %}
 
                     {% endfor %}
 
                     {% if page_obj.has_next %}
-                        <a href="?sort={{ sort_by }}&page={{ page_obj.next_page_number }}">Next</a>
+                        <a href="?sort={{ sort_by }}&page={{ page_obj.next_page_number }}&q={{ query }}">Next</a>
                     {% else %}
                         <a href="#" class="admin-disabled" onclick="return false;">Next</a>
                     {% endif %}

@@ -30,30 +30,66 @@ def portfolio(request):
     return render(request, 'portfolio.html')
 
 
+from django.shortcuts import render
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+
+
+# 假设 Book 模型已经定义
+# from .models import Book
+
+@login_required  # 确保用户已登录
 def myadmin(request):
     user = request.user
+    query = request.GET.get('q', '')
 
-    # 排序
+    # 排序逻辑
     sort_by = request.GET.get('sort', '-upload_time')
     allowed_sort_fields = ['upload_time', '-upload_time', 'title', '-title', 'author', '-author']
     if sort_by not in allowed_sort_fields:
         sort_by = '-upload_time'
 
-    if not request.user.is_authenticated:
-        return render(request, 'no-permission.html')
+    # 无需检查 is_authenticated，因为使用了 @login_required 装饰器
 
     if user.is_superuser:
-        # 2. 如果是超级管理员，获取所有书本
-        books = Book.objects.all().order_by(sort_by)
+        # 1. 超级管理员：搜索全部书本
+        books_queryset = Book.objects.all()
+
+        if query:
+            books_queryset = books_queryset.filter(
+                Q(title__icontains=query) |
+                Q(author__icontains=query) |
+                Q(tags__name__icontains=query) |
+                Q(uploader__first_name__icontains=query) |
+                Q(uploader__last_name__icontains=query)
+            ).distinct()  # 使用 distinct() 解决多对多关系导致的重复问题
+
+        books = books_queryset.order_by(sort_by)
+
     else:
-        # 3. 如果只是普通 staff，只获取自己上传的 (uploader=user)
-        books = Book.objects.filter(uploader=user).order_by('-upload_time')
+        # 2. 非超级管理员 (Staff/普通用户)：只搜索自己发布的书本
 
+        # 基础过滤：只获取当前用户上传的书本
+        books_queryset = Book.objects.filter(uploader=user)
+
+        if query:
+            # 在自己发布的书本范围内进行搜索
+            books_queryset = books_queryset.filter(
+                Q(title__icontains=query) |
+                Q(author__icontains=query) |
+                Q(tags__name__icontains=query)
+            ).distinct()  # 同样需要去重，因为涉及到 tags
+
+        # 对自己发布的书本应用排序
+        books = books_queryset.order_by(sort_by)
+
+    # 分页
     paginator = Paginator(books, 8)
-    page_number = request.GET.get('page')  # 获取页码参数
-    page_obj = paginator.get_page(page_number)  # 获取当前页对象
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, 'admin/admin_book.html', {'page_obj': page_obj, 'sort_by': sort_by})
+    return render(request, 'admin/admin_book.html', {'page_obj': page_obj, 'sort_by': sort_by, 'query': query})
 
 
 @login_required
@@ -272,14 +308,23 @@ def admin_tag(request):
     if sort_by not in allowed_sort_fields:
         sort_by = 'id'
 
+    query = request.GET.get('q', '')
+
     if not request.user.is_superuser and not request.user.is_staff:
         return render(request, 'no-permission.html')
 
-    tags = Tag.objects.all().order_by(sort_by)
+    if query:
+        # 实现简单的搜索功能
+        tags = Tag.objects.filter(
+            Q(name__icontains=query)
+        ).order_by(sort_by)
+    else:
+        tags = Tag.objects.all().order_by(sort_by)
+
     paginator = Paginator(tags, 8)
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
-    return render(request, 'admin/admin_tag.html', {'page_obj': page_obj, 'sort_by': sort_by})
+    return render(request, 'admin/admin_tag.html', {'page_obj': page_obj, 'sort_by': sort_by, 'query': query})
 
 
 def admin_tag_add(request):
@@ -346,14 +391,14 @@ def admin_user(request):
     allowed_sort_fields = ['id', '-id', 'is_staff', '-is_staff', 'is_superuser', '-is_superuser']
     if sort_by not in allowed_sort_fields:
         sort_by = '-id'
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
     if query:
         # 实现简单的搜索功能
         users = User.objects.filter(
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
             Q(email__icontains=query)
-        ).order_by('id')
+        ).order_by(sort_by)
     else:
         users = User.objects.all().order_by(sort_by)
 
@@ -383,6 +428,7 @@ def admin_user_edit(request):
     """
     用户编辑视图：通过隐藏字段中的 ID 来处理用户
     """
+    next_url = request.META.get('HTTP_REFERER', '/')
     if request.method == 'POST':
         # 1. POST 请求：从表单中获取隐藏的 user_id
         user_id = request.POST.get('user_id')
@@ -390,7 +436,7 @@ def admin_user_edit(request):
         if not user_id:
             # 如果没有 ID，则返回错误或重定向
             # 实际应用中需要更好的错误处理
-            return redirect('admin_user')
+            return redirect(next_url)
 
         user = get_object_or_404(User, pk=user_id)
 
@@ -400,7 +446,7 @@ def admin_user_edit(request):
         if form.is_valid():
             # 3. 数据验证成功：保存表单
             form.save()
-            return redirect('admin_user')
+            return redirect(next_url)
 
         # 如果表单验证失败，需要重新渲染表单（并传递 user 实例）
         # ⚠️ 注意：如果表单验证失败，需要确保 form 和 user 实例被正确传递到渲染逻辑
@@ -413,7 +459,7 @@ def admin_user_edit(request):
         # 要求 URL 中有查询参数，例如 ?user_id=123
         user_id = request.GET.get('user_id')
         if not user_id:
-            return redirect('admin_user')  # 如果没有ID，返回列表
+            return redirect(next_url)  # 如果没有ID，返回列表
 
         user = get_object_or_404(User, pk=user_id)
         form = UserEditForm(instance=user)
