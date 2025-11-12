@@ -131,7 +131,7 @@ a {
     padding: 6px 12px;
 }
 
-.admin-btn-edit {
+.admin-btn-edit,.admin-btn-active {
     background-color: #FFC107;
     color: #fff;
     font-size: 14px;
@@ -168,7 +168,26 @@ a {
     border-top-right-radius: 5px;
 }
 
-.admin-book-list-item {
+.admin-book-list-header a,.admin-tag-list-header a,.admin-user-list-header a{
+    color: #000;
+}
+
+
+
+.admin-tag-list-header {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 0.8fr;
+    gap: 20px;
+    padding: 15px 20px;
+    background: rgba(5, 147, 119, 0.09);
+    font-size: 16px;
+    color: #000;
+    border-bottom: 1px solid var(--border-color);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.admin-book-list-item{
     display: grid;
     grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
     gap: 20px;
@@ -179,11 +198,45 @@ a {
     color: #555;
 }
 
-.admin-book-list-item:last-child {
+.admin-user-list-header{
+    display: grid;
+    grid-template-columns: 0.5fr 1.5fr 2.5fr 0.7fr 0.7fr 0.7fr 2fr;
+    background: rgba(5, 147, 119, 0.09);
+    gap: 20px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+    font-size: 15px;
+    color: #000;
+}
+
+.admin-tag-list-item {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 0.8fr;
+    gap: 20px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+    font-size: 15px;
+    color: #555;
+}
+
+.admin-user-list-item {
+    display: grid;
+    grid-template-columns: 0.5fr 1.5fr 2.5fr 0.7fr 0.7fr 0.7fr 2fr;
+    gap: 20px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+    font-size: 15px;
+    color: #555;
+}
+
+.admin-book-list-item:last-child, .admin-tag-list-item:last-child, .admin-user-list-item:last-child {
     border-bottom: none;
 }
 
-.admin-book-list-item .admin-actions {
+.admin-book-list-item .admin-actions, .admin-tag-list-item .admin-actions,.admin-user-list-item .admin-actions {
     text-align: center;
     display: flex;
     flex-wrap: wrap;
@@ -341,12 +394,14 @@ a {
     position: absolute;
     z-index: 0;
 }
-.admin_coverupload label p span{
+
+.admin_coverupload label p span {
     width: 70%;
     overflow: hidden;
     margin: 0 auto;
     color: #d3d3d3;
 }
+
 .admin_coverupload input {
     display: none;
 }
@@ -411,14 +466,92 @@ a {
     z-index: 9999;
 }
 
+#tagadd-overlay,#tagedit-overlay {
+    position: fixed; /* 固定在视口上 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
+
+    /* 使用 Flexbox 让内容居中 */
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    /* 默认隐藏 */
+
+
+    /* 确保在最顶层 */
+    z-index: 9999;
+}
+
+.tagadd-content{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+#tagname,#tagname_edit,.admin-edit-input{
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 0;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.tagadd-contentbtn,.tagedit-contentbtn{
+    border-radius: 5px;
+    width: 45%;
+    font-size: 15px;
+    padding: 10px 0;
+    cursor: pointer;
+    border: none;
+    cursor: pointer;
+}
+
+#tagadd-contentsub,#tagedit-contentsub {
+  background-color: #059377;
+    color: #fff;
+}
+
+#tagadd-contentclose{
+    color: #059377;
+    border: 1px solid #059377;
+    background: none;
+}
+
 /* 进度条的白色框 */
-#upload-overlay .progress-box {
+.progress-box {
     background-color: white;
     padding: 30px 50px;
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+.progress-box-user {
+    width: 400px;
+    background-color: white;
+    padding: 30px 50px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.progress-box-user .info-value{
+    border: 1px solid #d3d3d3;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.progress-box-user .info-label{
+    line-height: 39px;
+}
+
+
+
 
 #upload-overlay progress {
     width: 100%;
@@ -495,11 +628,11 @@ a {
     }
 
     /* 关键：将列表转换为卡片视图 */
-    .admin-book-list-header {
+    .admin-book-list-header, .admin-tag-list-header,.admin-user-list-header {
         display: none; /* 隐藏桌面版的列表头 */
     }
 
-    .admin-book-list-item {
+    .admin-book-list-item, .admin-tag-list-item,.admin-user-list-item {
         display: block; /* 覆盖 grid 布局，变为块级 */
         padding: 15px;
         margin-bottom: 10px;
@@ -509,21 +642,22 @@ a {
         gap: 10px; /* 重置 gap */
     }
 
+
     /* 使用 data-label 显示标签 */
-    .admin-book-list-item div {
+    .admin-book-list-item div, .admin-tag-list-item div,.admin-user-list-item div {
         display: flex;
         justify-content: space-between;
         padding: 8px 0;
         border-bottom: 1px solid #d3d3d3;
     }
 
-    .admin-book-list-item div::before {
+    .admin-book-list-item div::before, .admin-tag-list-item div::before,.admin-user-list-item div::before {
         content: attr(data-label); /* 显示 data-label 的内容 */
         font-weight: bold;
         padding-right: 15px;
     }
 
-    .admin-book-list-item .admin-actions {
+    .admin-book-list-item .admin-actions, .admin-tag-list-item .admin-actions,.admin-user-list-item .admin-actions {
         border-bottom: none;
         padding-top: 15px;
         display: flex;
@@ -534,16 +668,16 @@ a {
         width: 100%;
     }
 
-    .admin-book-list-item .admin-actions::before {
+    .admin-book-list-item .admin-actions::before, .admin-tag-list-item .admin-actions::before, .admin-user-list-item .admin-actions::before {
         display: none; /* 动作按钮不需要标签 */
     }
 
-    .admin-book-list-item .admin-actions .admin-btn-danger, .admin-btn-edit {
-        width: 100%; /* 删除按钮占满宽度 */
+    .admin-actions .admin-btn-danger, .admin-btn-edit, .admin-tag-list-item,.admin-btn-active {
+        width: 100%!important; /* 删除按钮占满宽度 */
         padding: 10px;
     }
 
-    .admin-btn-edit {
+    .admin-btn-edit,.admin-btn-active {
         margin-bottom: 10px;
     }
 

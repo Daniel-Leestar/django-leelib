@@ -15,24 +15,24 @@
                 <h1>Users Management {% if not user.is_superuser %}
                     <span style="color: #dc3545;">No Permission</span>{% endif %}</h1>
 
-                <button class="admin-btn admin-btn-primary" id="add_tag">Add New Tag</button>
+                <button class="admin-btn admin-btn-primary" id="add_tag">Add New User</button>
 
             </div>
 
-            <div class="admin-search-container">
-                <input type="text" placeholder="Search by title, author, etc.">
+            <form class="admin-search-container" action="" method="get">
+                <input type="text" placeholder="Search by name, email" name="q">
                 <button class="admin-btn admin-btn-primary">Search</button>
-            </div>
+            </form>
 
             <div class="admin-book-list">
 
                 <div class="admin-user-list-header">
                     <div>
 
-                        <a href="{% url 'admin_tag' %}?sort={% if sort_by == 'id' %}-{% endif %}id">
+                        <a href="{% url 'admin_user' %}?sort={% if sort_by == 'id' %}-{% endif %}id">
                             ID
 
-                            {% if sort_by == 'id' or sort_by == '' %}
+                            {% if not sort_by == '-id' %}
                                 <span class="sort-icon">▲</span> {% elif sort_by == '-id' %}
                                 <span class="sort-icon">▼</span> {% endif %}
                         </a>
@@ -41,8 +41,26 @@
                     <div>Name</div>
                     <div>Email</div>
                     <div>Active</div>
-                    <div>Staff</div>
-                    <div>Superuser</div>
+                    <div>
+
+                        <a href="{% url 'admin_user' %}?sort={% if sort_by == 'is_staff' %}-{% endif %}is_staff">
+                            Staff
+
+                            {% if not sort_by == '-is_staff' %}
+                                <span class="sort-icon">▲</span> {% elif sort_by == '-is_staff' %}
+                                <span class="sort-icon">▼</span> {% endif %}
+                        </a>
+
+                    </div>
+                    <div>
+                        <a href="{% url 'admin_user' %}?sort={% if sort_by == 'is_superuser' %}-{% endif %}is_superuser">
+                            Superuser
+
+                            {% if not sort_by == '-is_superuser' %}
+                                <span class="sort-icon">▲</span> {% elif sort_by == '-is_superuser' %}
+                                <span class="sort-icon">▼</span> {% endif %}
+                        </a>
+                    </div>
                     <div class="admin-actions">Actions</div>
                 </div>
 
@@ -58,9 +76,9 @@
                         <div data-label="email">{{ user.email }}</div>
                         <div data-label="">
                             {% if user.is_active %}
-                                ✅ 活跃
+                                ✅
                             {% else %}
-                                ❌ 禁用
+                                ❌
                             {% endif %}
                         </div>
                         <div data-label="staff">
@@ -90,11 +108,11 @@
                             </form>
                             <a class="admin-btn admin-btn-edit">Edit</a>
                             <form method="POST"
-                                  action=""
+                                  action="{% url 'admin_user_delete' %}"
                                   style="display: inline;">
 
                                 {% csrf_token %}
-                                <input type="hidden" name="id" value="">
+                                <input type="hidden" name="id" value="{{ user.id }}">
                                 <button type="submit"
                                         class="admin-btn admin-btn-danger"
 
@@ -147,70 +165,116 @@
         </main>
     </div>
 
-    <div id="tagadd-overlay">
-        <div class="progress-box">
-            <h3 style="color: #059377;margin-bottom: 20px;">Add Tag</h3>
-            <form class="tagadd-content" action="{% url 'admin_tag_add' %}" method="post">
+    <div id="tagadd-overlay" {% if messages %}style="display: flex"{% endif %}>
+        <div class="progress-box-user">
+            <form action="{% url 'admin_user_add' %}" method="post">
                 {% csrf_token %}
-                <input type="text" id="tagname" placeholder="Tag Name" name="name">
-                <input type="submit" class="tagadd-contentbtn" id="tagadd-contentsub">
-                <button class="tagadd-contentbtn" id="tagadd-contentclose" type="button">Close</button>
+                <ul class="info-list">
+                    <li>
+                        <span class="info-label">First Name</span>
+                        <input type="text" class="info-value" name="first_name">
+                    </li>
+                    <li>
+                        <span class="info-label">Last Name</span>
+                        <input type="text" class="info-value" name="last_name">
+                    </li>
+                    <li>
+                        <span class="info-label">Email</span>
+                        <input type="text" class="info-value" name="email">
+                    </li>
+
+                    <li>
+                        <span class="info-label">Staff</span>
+                        <input type="checkbox" style="line-height: 39px; cursor: pointer;" name="staff">
+                    </li>
+                    <li>
+                        <span class="info-label">Super User</span>
+                        <input type="checkbox" style="line-height: 39px; cursor: pointer;" name="super_user">
+                    </li>
+
+                    <li>
+                        <span class="info-label">Password</span>
+                        <input type="password" class="info-value" name="password">
+                    </li>
+
+                    <li>
+                        <span class="info-label">Confirm Password</span>
+                        <input type="password" class="info-value" name="confirm_password">
+                    </li>
+
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <li>
+                        <input type="submit" class="tagadd-contentbtn" id="tagadd-contentsub" value="Save Changes">
+                        <button class="tagadd-contentbtn" id="tagadd-contentclose" type="button">Close</button>
+                    </li>
+                </ul>
             </form>
         </div>
     </div>
 
     <div id="tagedit-overlay">
-    <div class="progress-box-user">
-        <form action="{% url 'admin_user_edit' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="user_id" value="" id="user_id">
-            <ul class="info-list">
+        <div class="progress-box-user">
+            <form action="{% url 'admin_user_edit' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="" id="user_id">
+                <ul class="info-list">
 
-                <li>
-                    <span class="info-label">First Name</span>
-                    {{ form.first_name }}
-                    {{ form.first_name.errors }}
-                </li>
-                <li>
-                    <span class="info-label">Last Name</span>
-                    {{ form.last_name }}
-                    {{ form.last_name.errors }}
-                </li>
-                <li>
-                    <span class="info-label">Email</span>
-                    {{ form.email }}
-                    {{ form.email.errors }}
-                </li>
+                    <li>
+                        <span class="info-label">First Name</span>
+                        {{ form.first_name }}
+                        {{ form.first_name.errors }}
+                    </li>
+                    <li>
+                        <span class="info-label">Last Name</span>
+                        {{ form.last_name }}
+                        {{ form.last_name.errors }}
+                    </li>
+                    <li>
+                        <span class="info-label">Email</span>
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </li>
 
-                <li>
-                    <span class="info-label">Staff</span>
-                    {{ form.is_staff }}
-                </li>
-                <li>
-                    <span class="info-label">Super User</span>
-                    {{ form.is_superuser }}
-                </li>
+                    <li>
+                        <span class="info-label">Staff</span>
+                        {{ form.is_staff }}
+                    </li>
+                    <li>
+                        <span class="info-label">Super User</span>
+                        {{ form.is_superuser }}
+                    </li>
 
-                <li>
-                    <span class="info-label">Last Login</span>
-                    <span style="line-height: 39px;" id="user_lastlogin">{{ last_login_time }}</span>
-                </li>
+                    <li>
+                        <span class="info-label">Last Login</span>
+                        <span style="line-height: 39px;" id="user_lastlogin">{{ last_login_time }}</span>
+                    </li>
 
-                <li>
-                    <input type="submit" class="tagadd-contentbtn" id="tagadd-contentsub" value="Save Changes">
-                    <button class="tagadd-contentbtn" id="tagedit-contentclose" type="button">Close</button>
-                </li>
-            </ul>
+                    <li>
+                        <input type="submit" class="tagadd-contentbtn" id="tagadd-contentsub" value="Save Changes">
+                        <button class="tagadd-contentbtn" id="tagedit-contentclose" type="button">Close</button>
+                    </li>
+                </ul>
 
-        </form>
-    </div>
-        
+            </form>
+        </div>
+
     </div>
 
     <script>
         $().ready(function () {
             $("#add_tag").click(function () {
                 $("#tagadd-overlay").css('display', 'flex');
+            })
+
+            $("#tagadd-contentclose").click(function () {
+                $("#tagadd-overlay").css('display', 'none');
             })
 
             $("#tagedit-contentclose").click(function () {

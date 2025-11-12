@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.db import transaction  # 导入事务，确保数据一致性
 from django.db.models import Q  # 用于搜索
 from .forms import BookForm, UserEditForm
+from django.contrib import messages  # 引入 messages 框架
 
 
 def index(request):
@@ -282,6 +283,8 @@ def admin_tag(request):
 
 
 def admin_tag_add(request):
+    if not request.user.is_superuser:
+        return render(request, 'no-permission.html')
     next_url = request.META.get('HTTP_REFERER', '/')
 
     if not request.user.is_superuser and not request.user.is_staff:
@@ -295,6 +298,8 @@ def admin_tag_add(request):
 
 
 def admin_tag_delete(request):
+    if not request.user.is_superuser:
+        return render(request, 'no-permission.html')
     next_url = request.META.get('HTTP_REFERER', '/')
     if not request.user.is_superuser and not request.user.is_staff:
         return render(request, 'no-permission.html')
@@ -310,6 +315,8 @@ def admin_tag_delete(request):
 
 
 def admin_tag_edit(request):
+    if not request.user.is_superuser:
+        return render(request, 'no-permission.html')
     next_url = request.META.get('HTTP_REFERER', '/')
     if request.method == "POST":
         # 2. 获取用户提交的新名字
@@ -335,6 +342,10 @@ def admin_user(request):
     if not request.user.is_superuser:
         return render(request, 'no-permission.html')
     """用户列表视图"""
+    sort_by = request.GET.get('sort', '-id')
+    allowed_sort_fields = ['id', '-id', 'is_staff', '-is_staff', 'is_superuser', '-is_superuser']
+    if sort_by not in allowed_sort_fields:
+        sort_by = '-id'
     query = request.GET.get('q')
     if query:
         # 实现简单的搜索功能
@@ -344,14 +355,14 @@ def admin_user(request):
             Q(email__icontains=query)
         ).order_by('id')
     else:
-        users = User.objects.all().order_by('id')
+        users = User.objects.all().order_by(sort_by)
 
     paginator = Paginator(users, 8)
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
 
     form = UserEditForm()
-    context = {'form': form,'page_obj': page_obj, 'query': query}
+    context = {'form': form, 'page_obj': page_obj, 'query': query, 'sort_by': sort_by}
     return render(request, 'admin/admin_user.html', context)
 
 
@@ -375,7 +386,7 @@ def admin_user_edit(request):
     if request.method == 'POST':
         # 1. POST 请求：从表单中获取隐藏的 user_id
         user_id = request.POST.get('user_id')
-        print("修改用户信息，user id:",user_id)
+        print("修改用户信息，user id:", user_id)
         if not user_id:
             # 如果没有 ID，则返回错误或重定向
             # 实际应用中需要更好的错误处理
@@ -402,20 +413,134 @@ def admin_user_edit(request):
         # 要求 URL 中有查询参数，例如 ?user_id=123
         user_id = request.GET.get('user_id')
         if not user_id:
-            return redirect('admin_user') # 如果没有ID，返回列表
+            return redirect('admin_user')  # 如果没有ID，返回列表
 
         user = get_object_or_404(User, pk=user_id)
         form = UserEditForm(instance=user)
 
-    print("check",form)
+    print("check", form)
     context = {
         'form': form,
-        'user_id': user.pk, # 用于隐藏字段
+        'user_id': user.pk,  # 用于隐藏字段
         'last_login_time': user.last_login if user.last_login else 'N/A'
     }
 
     # 渲染包含表单的模板
     return render(request, 'admin/admin_user.html', context)
+
+
+def admin_user_add(request):
+    """
+    处理用户添加页面的视图。
+    - 成功或失败后，都重定向到 ADMIN_USER_URL_NAME 并通过 messages 携带状态信息。
+    """
+    if request.method == 'POST':
+        # 1. 从 POST 数据中获取字段值
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+        # HTML中checkbox如果选中，会发送 'on'，否则不会出现在request.POST中
+        is_staff = 'staff' in request.POST
+        is_superuser = 'super_user' in request.POST
+
+        # 2. 基本数据验证
+        if not all([first_name, last_name, email, password, confirm_password]):
+            # 使用 messages.error 记录错误信息
+            messages.error(request, '所有字段（密码确认除外）都是必填项，请检查。')
+            return redirect('admin_user')  # 立即重定向
+
+        if password != confirm_password:
+            messages.error(request, '密码和确认密码不匹配。')
+            return redirect('admin_user')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, '该邮箱已被注册。')
+            return redirect('admin_user')
+
+        try:
+            # 3. 创建用户
+            if is_superuser:
+                # 使用 create_superuser
+                User.objects.create_superuser(
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    password=password,
+                )
+            elif is_staff:
+                # 创建普通用户，然后设置 is_staff=True
+                user = User.objects.create_user(
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    password=password,
+                )
+                user.is_staff = True
+                user.is_active = True
+                user.save()
+            else:
+                # 创建普通非 staff 用户
+                User.objects.create_user(
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    password=password,
+                )
+
+            # 成功消息
+            messages.success(request, f'用户 {email} 成功添加。')
+            return redirect('admin_user')  # 成功后重定向
+
+        except ValueError as e:
+            # 捕获 UserManager 中的验证错误
+            messages.error(request, f'创建用户失败: {e}')
+            return redirect('admin_user')
+
+        except Exception as e:
+            # 捕获其他可能的数据库错误等
+            messages.error(request, f'发生未知错误: {e}')
+            return redirect('admin_user')
+
+    # GET 请求：通常你不会通过 GET 访问这个视图，因为它是处理表单提交的，
+    # 但如果它是显示表单的页面，则依然渲染表单。
+    # 如果这个视图只是用来处理 POST，而 GET 应该重定向，可以改为：
+    # return redirect(ADMIN_USER_URL_NAME)
+    # 这里保持原样，假设 add_user_view 页面就是弹出/渲染表单的页面
+    return render(request, 'add_user.html')
+
+
+def admin_user_delete(request):
+    next_url = request.META.get('HTTP_REFERER', '/')
+    """
+    处理用户删除请求的视图。
+    - 仅接受 POST 请求。
+    - 需要从 POST 数据中获取要删除的用户 ID。
+    """
+    # 1. 获取要删除的用户 ID
+    # 假设你在 admin_user 页面中通过一个隐藏字段或表单按钮传递了 user_id
+    user_id = request.POST.get('id')
+
+    try:
+        # 2. 查找用户对象
+        # 使用 get_object_or_404 确保用户存在，但这里为了保持流程连续性，我们使用 filter
+        user_to_delete = User.objects.get(pk=user_id)
+
+        # 3. (可选但推荐) 安全检查：防止用户删除自己
+        if user_to_delete == request.user:
+            return render("no-permission.html")
+
+        # 4. 执行删除操作
+        email = user_to_delete.email  # 保存邮箱以便在消息中使用
+        user_to_delete.delete()
+        print(f'用户 {email} 及其所有相关数据已成功删除。')
+
+    except Exception as e:
+        print(f'删除用户时发生错误: {e}')
+
+    return redirect(next_url)
+
 
 def admin_core(request):
     if not request.user.is_superuser:

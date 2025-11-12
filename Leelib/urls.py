@@ -36,6 +36,8 @@ urlpatterns = [
     path('admin-user/', views.admin_user, name='admin_user'),
     path('admin-user-active/', views.admin_user_active, name='admin_user_active'),
     path('admin-user-edit/', views.admin_user_edit, name='admin_user_edit'),
+    path('admin-user-add/', views.admin_user_add, name='admin_user_add'),
+    path('admin-user-delete/', views.admin_user_delete, name='admin_user_delete'),
     path('admin-user-core/', views.admin_core, name='admin_core'),
     path('', include('login.urls')),
     path('', include('books.urls'))
