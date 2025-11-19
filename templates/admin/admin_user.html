@@ -71,11 +71,11 @@
 
                     <div class="admin-user-list-item">
                         <div data-label="id">{{ user.id }}</div>
-                        <div><span data-label="fname">{{ user.first_name }}</span> <span
-                                data-label="lname">{{ user.last_name }}</span></div>
+                        <div data-label="name"><span><span data-label="fname">{{ user.first_name }}</span> <span
+                                data-label="lname">{{ user.last_name }}</span></span></div>
                         <input type="hidden" value="{{ user.last_login }}" data-label="lastlogin">
                         <div data-label="email">{{ user.email }}</div>
-                        <div data-label="">
+                        <div data-label="active">
                             {% if user.is_active %}
                                 ✅
                             {% else %}

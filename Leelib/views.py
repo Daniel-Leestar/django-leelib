@@ -494,15 +494,15 @@ def admin_user_add(request):
         # 2. 基本数据验证
         if not all([first_name, last_name, email, password, confirm_password]):
             # 使用 messages.error 记录错误信息
-            messages.error(request, '所有字段（密码确认除外）都是必填项，请检查。')
+            messages.error(request, 'All fields (except password confirmation) are required. Please check them.')
             return redirect('admin_user')  # 立即重定向
 
         if password != confirm_password:
-            messages.error(request, '密码和确认密码不匹配。')
+            messages.error(request, 'The password and confirmation password do not match.')
             return redirect('admin_user')
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, '该邮箱已被注册。')
+            messages.error(request, 'This email has already been registered.')
             return redirect('admin_user')
 
         try:
@@ -536,17 +536,17 @@ def admin_user_add(request):
                 )
 
             # 成功消息
-            messages.success(request, f'用户 {email} 成功添加。')
+            messages.success(request, f'User {email} was added successfully.')
             return redirect('admin_user')  # 成功后重定向
 
         except ValueError as e:
             # 捕获 UserManager 中的验证错误
-            messages.error(request, f'创建用户失败: {e}')
+            messages.error(request, f'Failed to create user: {e}')
             return redirect('admin_user')
 
         except Exception as e:
             # 捕获其他可能的数据库错误等
-            messages.error(request, f'发生未知错误: {e}')
+            messages.error(request, f'An unknown error occurred: {e}')
             return redirect('admin_user')
 
     # GET 请求：通常你不会通过 GET 访问这个视图，因为它是处理表单提交的，
@@ -580,7 +580,7 @@ def admin_user_delete(request):
         # 4. 执行删除操作
         email = user_to_delete.email  # 保存邮箱以便在消息中使用
         user_to_delete.delete()
-        print(f'用户 {email} 及其所有相关数据已成功删除。')
+        print(f'The user {email} and all associated data have been successfully deleted.')
 
     except Exception as e:
         print(f'删除用户时发生错误: {e}')

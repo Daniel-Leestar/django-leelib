@@ -7,7 +7,11 @@
             <li><a href="{% url 'admin_tag' %}" class="{% if active_page == 'tags' %}admin-active{% endif %}">Tags</a>
             </li>
         {% endif %}
-        <li><a href="{% url 'admin_user' %}" class="{% if active_page == 'users' %}admin-active{% endif %}">Users</a></li>
-        <li><a href="{% url 'admin_core' %}" class="{% if active_page == 'core' %}admin-active{% endif %}">Core Panel</a></li>
+        {% if user.is_superuser %}
+            <li><a href="{% url 'admin_user' %}"
+                   class="{% if active_page == 'users' %}admin-active{% endif %}">Users</a></li>
+            <li><a href="{% url 'admin_core' %}" class="{% if active_page == 'core' %}admin-active{% endif %}">Core
+                Panel</a></li>
+        {% endif %}
     </ul>
 </nav>
