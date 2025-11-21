@@ -118,10 +118,10 @@
             <form action="/login/" method="post">
                 {% csrf_token %}
                 <p class="infofront">Email</p>
-                <input type="text" class="otherinput ifnull" id="email" name="email">
+                <input type="text" class="otherinput ifnull" id="email" name="email" required>
                 <p class="infofront">Password</p>
                 <input type="password" class="otherinput ifnull" id="psw" name="password">
-                <input type="submit" id="infosub" value="Login">
+                <input type="submit" id="infosub" value="Login" required>
             </form>
             <div class="warn">{{ err }}</div>
             <p class="undersub">&copy Copyright</p>

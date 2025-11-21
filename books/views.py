@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 import os
 from django.http import FileResponse
 
+
 # Create your views here.
 def detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
@@ -19,12 +20,16 @@ def detail(request, book_id):
         is_collected = False
 
     return render(request, 'books/detail.html', {'book': book, 'recbooks': recbooks, 'is_collected': is_collected})
-#为
+
+
+# 为
 
 def read(request, book_id):
+    if not request.user.is_authenticated:
+        return render(request, 'no-permission.html')
+
     book = Book.objects.get(id=book_id)
     file_name = book.file.name.lower()
-
 
     if file_name.endswith('.pdf'):
         file_type = 'pdf'
@@ -119,5 +124,3 @@ def bookshelf(request):
     page_obj = paginator.get_page(page_number)  # 自动处理无效页码
 
     return render(request, 'books/bookshelf.html', {'page_obj': page_obj})
-
-
