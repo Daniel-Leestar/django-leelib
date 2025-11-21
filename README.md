@@ -30,3 +30,28 @@ pip install -r requirements.txt
 Email(邮箱) root@leelib.com
 
 Password(密码) 12345678
+
+## Home Page 首页
+
+![image](https://github.com/Daniel-Leestar/django-leelib/blob/master/Preview%20Images/home.jpg)
+
+## Detail Page 详情页
+
+![image](https://github.com/Daniel-Leestar/django-leelib/blob/master/Preview%20Images/detail.jpg)
+
+
+## Read Page 阅读页
+
+![image](https://github.com/Daniel-Leestar/django-leelib/blob/master/Preview%20Images/read.jpg)
+
+## Management Page 管理页
+
+![image](https://github.com/Daniel-Leestar/django-leelib/blob/master/Preview%20Images/manage.png)
+
+## Login Page 登录页
+
+![image](https://github.com/Daniel-Leestar/django-leelib/blob/master/Preview%20Images/login.jpg)
+
+## Sign-up Page 注册页
+
+![image](https://github.com/Daniel-Leestar/django-leelib/blob/master/Preview%20Images/signup.jpg)
