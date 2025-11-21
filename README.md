@@ -25,7 +25,7 @@ Then start the server:
 pip install -r requirements.txt
 ```
 
-##Default admin username and password 默认管理员账号密码
+## Default admin username and password 默认管理员账号密码
 
 Email(邮箱) root@leelib.com
 Password(密码) 12345678
