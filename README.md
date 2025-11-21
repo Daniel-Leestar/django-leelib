@@ -29,19 +29,19 @@ python manage.py runserver
 
 ### Rules of user management 用户规则
 
-Activated users: Can use the bookshelf and online preview features
+Activated users: Can use the bookshelf and online preview features, the backend can only view their own books.
 
-Staff: Can upload books
+Staff: Can upload books, the backend can view and edit their own books.
 
-Superuser: Has all permissions
+Superuser: Has all permissions, the backend can view and edit all the books.
 
 Note: When creating a superuser, make sure to also check the Staff option.
 
-仅激活账户: 使用书架、在线预览功能 
+仅激活账户: 使用书架、在线预览功能，后台只能查看自己的书
 
-员工: 上传书本 
+员工: 上传书本，后台只能查看与编辑自己的书
 
-超级用户: 所有权限 
+超级用户: 所有权限，后台可以查看与编辑所有人的书
 
 注意使用超级用户时必须选上员工
 
