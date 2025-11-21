@@ -24,7 +24,7 @@ Then start the server:
 开启服务
 
 ```bash
-pip install -r requirements.txt
+python manage.py runserver
 ```
 
 ### Rules of user management 用户规则
