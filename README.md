@@ -27,7 +27,7 @@ Then start the server:
 pip install -r requirements.txt
 ```
 
-### Rules of user management
+### Rules of user management 用户规则
 
 Activated users: Can use the bookshelf and online preview features
 
